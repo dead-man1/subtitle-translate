@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRT Translator to Any Language (Gemini)</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Dropzone CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css">
+    <!-- Link to your custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="root">
+        <div class="container">
+            <div class="top-bar">
+                <h1 id="page-title" class="page-title">SRT Translator to Any Language</h1>
+                <button id="themeToggle" aria-label="Toggle theme" title="Click to toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="languageToggle" aria-label="Toggle language" title="Click to toggle language">
+                    <i class="fas fa-language"></i>
+                </button>
+                <button id="clear-memory-button" aria-label="Clear translation memory" title="Click to clear translation memory">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+            <br>
+            <p id="warning-message" style="color: #ff4444; font-weight: bold; display: block;">⚠️ Please enable Use Proxy checkbox to access the Gemini API if you are in Iran, as Iran is currently under sanctions.</p>
+            <p id="upload-instructions">Upload an SRT file or paste SRT content and provide your Gemini API key to translate the text to any language.</p>
+            <form id="translate-form"> <!-- Removed onsubmit here, will add listener in JS -->
+                <label id="input-method-label">Input Method:</label>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <label><input type="radio" name="input_method" value="file" checked> Upload File</label>
+                    <label><input type="radio" name="input_method" value="text"> Paste Text</label>
+                </div>
+
+                <div id="file-input" class="input-section">
+                    <label id="file-label">Upload SRT File:</label>
+                    <!-- Dropzone container -->
+                    <div id="dropzone-upload" class="dropzone">
+                        <div class="dz-message">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag & drop your SRT file here<br>or click to browse</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="text-input" class="input-section" style="display: none;">
+                    <label id="text-label" for="srt_text">Paste SRT Content:</label>
+                    <textarea id="srt_text" name="srt_text" rows="6" placeholder="Paste your SRT content here..." style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: #e0e0e0; border: 1px solid rgba(255, 255, 255, 0.2); resize: vertical; direction: ltr;"></textarea>
+                </div>
+
+                <label id="api-key-label" for="api_key">Gemini API Key:</label>
+                <div class="api-key-container">
+                    <input type="password" id="api_key" name="api_key" placeholder="Enter your Gemini API key" required>
+                    <button type="button" class="toggle-password" id="togglePasswordBtn"> <!-- Added ID for JS listener -->
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="remember-me">
+                    <input type="checkbox" id="remember_me" name="remember_me">
+                    <label id="remember-me-label" for="remember_me">Remember my API key</label>
+                </div>
+
+                 <div class="remember-me">
+                    <input type="checkbox" id="useProxyCheckbox" name="useProxyCheckbox">
+                    <label id="use-proxy-label" for="useProxyCheckbox">Use Proxy</label>
+                </div>
+
+                <details class="advanced-settings">
+                    <summary id="advanced-settings-summary">Advanced Settings ⚠️</summary>
+                    <div class="advanced-warning">
+                        <p id="advanced-warning-message">⚠️ Warning: These settings are for advanced users only. Incorrect values may cause translation failures or API quota issues. Proceed with caution.</p>
+                        <label class="acknowledge-label">
+                            <input type="checkbox" id="acknowledge" name="acknowledge">
+                            <span id="acknowledge-text">I understand the risks and know what I'm doing</span>
+                        </label>
+                    </div>
+
+                    <label id="model-label" for="model">Gemini Model:</label>
+                    <select id="model" name="model">
+                        <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash</option>
+                        <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
+                        <option value="gemini-2.5-pro-preview-03-25">Gemini 2.5 Pro</option>
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                        <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash-8B</option>
+                        <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                    </select>
+                    <label id="base-delay-label" for="base_delay">Base Delay (ms):</label>
+                    <input type="number" id="base_delay" name="base_delay" min="100" value="1000" placeholder="Base delay in milliseconds" required>
+                    <label id="quota-delay-label" for="quota_delay">Quota Delay (ms):</label>
+                    <input type="number" id="quota_delay" name="quota_delay" min="1000" value="60000" placeholder="Quota delay in milliseconds" required>
+                    <label id="chunk-count-label" for="chunk_count">Number of Chunks:</label>
+                    <input type="number" id="chunk_count" name="chunk_count" min="1" value="20" placeholder="Number of chunks" required>
+                    <label id="translation-prompt-label" for="translation_prompt">Translation Instructions:</label>
+                    <textarea id="translation_prompt" name="translation_prompt" rows="4" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: #e0e0e0; border: 1px solid rgba(255, 255, 255, 0.2); resize: vertical; direction: ltr;">Translate the following subtitle text into the target language while maintaining:
+1. Natural, conversational tone
+2. Proper grammar and sentence structure
+3. Contextual accuracy
+4. Consistent terminology
+5. Appropriate length for on-screen display
+Avoid:
+1. Literal translations
+2. Overly formal or bookish language
+3. Unnatural phrasing
+4. Excessive wordiness</textarea>
+                </details>
+
+                <label id="lang-label" for="lang">Language:</label>
+                <input type="text" id="lang-input" name="lang" value="Persian (Farsi)" placeholder="Language:" style="direction: ltr;" required>
+                <button id="submit-button" type="submit">Translate</button>
+            </form>
+            <div class="progress-container" id="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="progress-text" id="progress-text">0% Complete</div>
+                <div class="progress-details">
+                    <span id="chunk-status">Processing chunk: 0/0</span>
+                    <span id="time-estimate">Estimated time: calculating...</span>
+                </div>
+            </div>
+            <div class="download-link" id="download-link"></div>
+            <div class="error-message" id="error-message"></div>
+            <p id="api-key-note" class="api-key-note">Get your API key from <a href='https://aistudio.google.com/app/apikey' target='_blank'>Google AI Studio</a>.</p>
+        </div>
+    </div>
+
+    <!-- Dropzone JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
+    <!-- Link to your custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

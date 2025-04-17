@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subtitle Translator</title>
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Theme Color for Browsers -->
+    <meta name="theme-color" content="#007bff"> <!-- Match manifest -->
+
+    <!-- iOS Specific Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- or default or black -->
+    <link rel="apple-touch-icon" href="icons/icon-192.png"> <!-- Use a suitable icon -->
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Dropzone CSS -->
@@ -216,5 +226,27 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js" integrity="sha512-U2WE1ktpMTuRBPoCFDzomoIorbOyUv0sP8B+INA3EzNAhehbzED1rOJg6bCqPf/Tuposxb5ja/MAUnC8THSbLQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Link to your custom JavaScript -->
     <script src="assets/script.js"></script>
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // --- IMPORTANT: Adjust the path based on your deployment ---
+                // If deploying to https://itsyebekhe.github.io/subtitle-translate/ use '/subtitle-translate/sw.js'
+                // If deploying to the root domain https://yourusername.github.io/ use '/sw.js'
+                const swPath = '/subtitle-translate/sw.js'; // <--- ADJUST THIS PATH if needed!
+                // -------------------------------------------------------------
+
+                navigator.serviceWorker.register(swPath)
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        } else {
+             console.log('Service Worker not supported in this browser.');
+        }
+    </script>
 </body>
 </html>

@@ -1,0 +1,716 @@
+:root {
+    --bg-gradient-dark: linear-gradient(135deg, #1e1e2f, #2a2a40);
+    --bg-gradient-light: linear-gradient(135deg, #f0f2f5, #e2e6ea);
+    --text-color-dark: #e0e0e0;
+    --text-color-light: #2c3e50;
+    --container-bg-dark: rgba(40, 40, 60, 0.9);
+    --container-bg-light: rgba(255, 255, 255, 0.9);
+    --input-bg-dark: rgba(255, 255, 255, 0.1);
+    --input-bg-light: rgba(0, 0, 0, 0.05);
+    --border-color-dark: rgba(255, 255, 255, 0.2);
+    --border-color-light: rgba(0, 0, 0, 0.2);
+    --accent-color: #007bff;
+    --accent-hover: #0056b3;
+    --error-color: #ff4444;
+    --success-color: #44ff44;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-gradient-dark);
+    color: var(--text-color-dark);
+    line-height: 1.6;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.light-theme {
+    background: var(--bg-gradient-light);
+    color: var(--text-color-light);
+}
+
+body.rtl {
+    direction: rtl;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Adjust as needed */
+    margin-bottom: 1rem; /* Add some spacing below */
+}
+
+.page-title {
+    flex-grow: 1; /* Allow title to take up space */
+    text-align: center; /* Center title text */
+    margin: 0; /* Remove default margins */
+}
+
+.top-bar button {
+    background: transparent;
+    border: none;
+    color: var(--text-color-dark);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: transform 0.3s ease, background-color 0.2s ease;
+    line-height: 1; /* Prevent extra height */
+    margin-left: 0.5rem; /* Space between buttons */
+}
+
+.top-bar button:hover {
+    transform: rotate(15deg);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.light-theme .top-bar button {
+    color: var(--text-color-light);
+}
+
+.light-theme .top-bar button:hover {
+     background-color: rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    background: var(--container-bg-dark);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+body.light-theme .container {
+    background: var(--container-bg-light);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color-dark);
+    text-align: center;
+    font-weight: 600;
+}
+
+.light-theme h1 {
+    color: var(--text-color-light);
+}
+
+p {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--text-color-dark);
+}
+
+.light-theme p {
+    color: var(--text-color-light);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 0.5rem; /* Reduced margin */
+    color: var(--text-color-dark);
+    display: block; /* Ensure labels take full width */
+}
+
+.light-theme label {
+    color: var(--text-color-light);
+}
+
+.light-theme .remove-file {
+    color: var(--text-color-light);
+    background: rgba(255, 68, 68, 0.1);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    border-radius: 4px;
+}
+
+.light-theme .remove-file:hover {
+    background: rgba(255, 68, 68, 0.2);
+}
+
+input[type="file"],
+input[type="text"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color-dark);
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 100%;
+    background: var(--input-bg-dark);
+    color: var(--text-color-dark);
+    transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+    direction: ltr; /* Default to LTR, can be overridden by body.rtl if needed */
+}
+
+body.light-theme input[type="text"],
+body.light-theme input[type="password"],
+body.light-theme input[type="number"],
+body.light-theme textarea,
+body.light-theme select {
+    background: var(--input-bg-light);
+    color: var(--text-color-light);
+    border-color: var(--border-color-light);
+}
+
+/* Dropzone specific styles */
+.dropzone {
+    background: var(--input-bg-dark);
+    border: 2px dashed var(--border-color-dark);
+    border-radius: 8px;
+    padding: 1.5rem; /* Adjusted padding */
+    text-align: center;
+    min-height: 120px; /* Adjusted height */
+    color: var(--text-color-dark);
+    transition: border-color 0.3s ease, background 0.3s ease;
+    margin-bottom: 1rem; /* Ensure spacing */
+    cursor: pointer;
+    display: flex; /* Use flexbox for centering */
+    justify-content: center;
+    align-items: center;
+}
+
+.light-theme .dropzone {
+    background: var(--input-bg-light);
+    border-color: var(--border-color-light);
+    color: var(--text-color-light);
+}
+
+.dropzone.dz-drag-hover {
+    border-color: var(--accent-color);
+    background: rgba(0, 123, 255, 0.1);
+}
+
+.dropzone .dz-message {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.dropzone .dz-message i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block; /* Ensure icon is on its own line */
+    color: var(--text-color-dark);
+}
+
+.light-theme .dropzone .dz-message i {
+    color: var(--text-color-light);
+}
+
+/* Override Dropzone preview styles */
+.dropzone .dz-preview {
+    background: transparent;
+    border: none;
+    margin: 0.5rem 0;
+    padding: 0;
+    text-align: center;
+    width: auto; /* Let content decide width */
+    display: inline-block; /* Make previews sit side-by-side if needed */
+    vertical-align: top; /* Align previews nicely */
+}
+
+.dropzone .dz-preview .dz-details {
+    background: var(--input-bg-dark);
+    border: 1px solid var(--border-color-dark);
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    color: var(--text-color-dark);
+    font-size: 0.9rem; /* Slightly smaller font */
+    display: inline-flex; /* Use flex for alignment */
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 250px; /* Prevent overly wide previews */
+    word-break: break-all; /* Break long filenames */
+}
+
+.light-theme .dropzone .dz-preview .dz-details {
+    background: var(--input-bg-light);
+    border-color: var(--border-color-light);
+    color: var(--text-color-light);
+}
+
+.dropzone .dz-preview .dz-filename {
+    color: var(--text-color-dark);
+    flex-grow: 1; /* Allow filename to take space */
+    text-align: left; /* Align text left */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.light-theme .dropzone .dz-preview .dz-filename {
+    color: var(--text-color-light);
+}
+
+.dropzone .dz-preview .dz-size {
+    display: none; /* Hide file size */
+}
+
+.dropzone .dz-preview .dz-remove {
+    display: inline-block; /* Show remove link */
+    margin-left: 0.5rem; /* Space it from details */
+    padding: 0.2rem 0.5rem;
+    background: rgba(255, 68, 68, 0.2);
+    border: 1px solid rgba(255, 68, 68, 0.4);
+    border-radius: 4px;
+    color: var(--error-color);
+    text-decoration: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.dropzone .dz-preview .dz-remove:hover {
+    background: rgba(255, 68, 68, 0.3);
+    color: #ff6666;
+}
+
+.light-theme .dropzone .dz-preview .dz-remove {
+    background: rgba(255, 68, 68, 0.1);
+    border-color: rgba(255, 68, 68, 0.3);
+    color: #cc3333;
+}
+
+.light-theme .dropzone .dz-preview .dz-remove:hover {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff4444;
+}
+
+.dropzone .dz-preview .dz-error-message {
+    color: var(--error-color);
+    background: rgba(255, 68, 68, 0.1);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Focus states */
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+}
+
+body.light-theme input[type="text"]:focus,
+body.light-theme input[type="password"]:focus,
+body.light-theme input[type="number"]:focus,
+body.light-theme textarea:focus,
+body.light-theme select:focus {
+     background: rgba(0, 0, 0, 0.08);
+     border-color: var(--accent-color);
+}
+
+.api-key-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.api-key-container input {
+    padding-right: 45px; /* Make space for the button */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 1px; /* Align with the input border */
+    top: 1px;
+    bottom: 1px;
+    width: 40px; /* Fixed width */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color-dark);
+    font-size: 1.1rem; /* Adjusted size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+    border-radius: 0 8px 8px 0; /* Match input corner */
+}
+
+.toggle-password:hover {
+    color: var(--accent-color);
+    background-color: rgba(255, 255, 255, 0.1); /* Slight hover effect */
+}
+
+body.light-theme .toggle-password {
+    color: var(--text-color-light);
+}
+
+body.light-theme .toggle-password:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem; /* Reduced margin */
+}
+
+.remember-me input[type="checkbox"] {
+    margin: 0;
+    width: auto; /* Let checkbox size naturally */
+    accent-color: var(--accent-color); /* Style checkbox */
+}
+
+.remember-me label {
+    color: var(--text-color-dark);
+    font-weight: normal; /* Normal weight for checkbox labels */
+    margin-bottom: 0; /* Remove bottom margin */
+    cursor: pointer;
+}
+
+body.light-theme .remember-me label {
+    color: var(--text-color-light);
+}
+
+button[type="submit"] {
+    padding: 0.85rem; /* Slightly larger padding */
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem; /* Slightly larger font */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 0.5rem; /* Add some space above the button */
+}
+
+button[type="submit"]:hover {
+    background: linear-gradient(135deg, var(--accent-hover), var(--accent-color));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.2);
+}
+
+button[type="submit"]:disabled {
+    background: #555;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+
+.progress-container {
+    margin-top: 1.5rem; /* Increased margin */
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.progress-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-color-dark);
+}
+
+.light-theme .progress-details {
+    color: var(--text-color-light);
+}
+
+@media (max-width: 480px) {
+    .progress-details {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    /* Prevent zoom on focus on iOS */
+    input[type="number"],
+    input[type="text"],
+    input[type="password"],
+    textarea,
+    select {
+        font-size: 16px;
+    }
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 0.5rem; /* Add margin */
+}
+
+body.light-theme .progress-bar {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-hover));
+    width: 0%; /* Start at 0 */
+    transition: width 0.4s ease-out; /* Smoother transition */
+    border-radius: 10px;
+}
+
+.progress-text {
+    text-align: center;
+    margin-top: 0.5rem;
+    color: var(--text-color-dark);
+    font-weight: bold;
+}
+
+body.light-theme .progress-text {
+     color: var(--text-color-light);
+}
+
+.download-link {
+    margin-top: 1.5rem; /* Increased margin */
+    text-align: center;
+    display: none; /* Initially hidden */
+    animation: fadeIn 0.5s 0.2s ease backwards; /* Fade in after progress */
+}
+
+.download-link a {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background-color: var(--success-color);
+    color: #111; /* Dark text on light green */
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.download-link a:hover {
+    background-color: #33dd33;
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.error-message {
+    color: var(--error-color);
+    background-color: rgba(255, 68, 68, 0.1);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 1rem;
+    display: none; /* Initially hidden */
+    font-size: 0.9rem;
+    word-wrap: break-word;
+    animation: fadeIn 0.3s ease;
+}
+
+.error-message.success {
+    color: var(--success-color);
+    background-color: rgba(68, 255, 68, 0.1);
+    border-color: rgba(68, 255, 68, 0.3);
+}
+
+.api-key-note {
+    font-size: 0.875rem;
+    color: #aaa; /* Lighter grey */
+    text-align: center;
+    margin-top: 1.5rem; /* Increased margin */
+}
+
+body.light-theme .api-key-note {
+    color: #555;
+}
+
+.api-key-note a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.api-key-note a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    h1.page-title {
+        font-size: 1.5rem; /* Smaller title on mobile */
+    }
+
+    .container {
+        padding: 1.5rem;
+    }
+
+     .top-bar button {
+        font-size: 1.3rem; /* Slightly smaller icons */
+        padding: 0.4rem;
+    }
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23e0e0e0" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem; /* Ensure space for arrow */
+}
+
+body.light-theme select {
+     background-image: url('data:image/svg+xml;utf8,<svg fill="%232c3e50" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+}
+
+.advanced-settings {
+    margin-top: 1rem;
+    border: 1px solid var(--border-color-dark);
+    border-radius: 8px;
+    padding: 0; /* Remove padding, summary handles it */
+    overflow: hidden; /* Clip content when closed */
+}
+
+body.light-theme .advanced-settings {
+    border-color: var(--border-color-light);
+}
+
+.advanced-settings[open] {
+    padding-bottom: 1rem; /* Add padding only when open */
+}
+
+
+.advanced-settings summary {
+    cursor: pointer;
+    padding: 0.75rem 1rem; /* Padding inside summary */
+    color: var(--text-color-dark);
+    font-weight: bold;
+    user-select: none;
+    list-style: none; /* Remove default marker */
+    display: flex; /* Use flex for icon alignment */
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05); /* Slight background */
+    transition: background 0.2s ease;
+}
+
+.advanced-settings summary:hover {
+     background: rgba(255, 255, 255, 0.1);
+}
+
+body.light-theme .advanced-settings summary {
+    color: var(--text-color-light);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+body.light-theme .advanced-settings summary:hover {
+     background: rgba(0, 0, 0, 0.04);
+}
+
+.advanced-settings summary::-webkit-details-marker {
+    display: none; /* Hide default marker (Chrome) */
+}
+
+/* Custom Arrow for Details/Summary */
+.advanced-settings summary::after {
+    content: '\\f078'; /* Font Awesome chevron-down */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 0.9em;
+    transition: transform 0.2s ease-in-out;
+    margin-left: 0.5rem;
+}
+
+.advanced-settings[open] > summary::after {
+    transform: rotate(180deg);
+}
+
+
+.advanced-settings-content {
+    padding: 0 1rem; /* Padding for content inside details */
+}
+
+.advanced-warning {
+    background: rgba(255, 165, 0, 0.1); /* Orange for warning */
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0; /* Spacing */
+}
+
+.advanced-warning p {
+    color: #ffa500; /* Orange text */
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-align: left; /* Align warning text left */
+}
+
+.acknowledge-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ffa500; /* Orange text */
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.acknowledge-label input[type="checkbox"] {
+    margin: 0;
+    width: auto;
+    accent-color: #ffa500; /* Orange checkbox */
+}
+
+.acknowledge-label span {
+     font-weight: normal;
+}
+
+/* Style for advanced settings inputs */
+.advanced-settings .advanced-settings-content label {
+    margin-top: 1rem; /* Space above each label */
+}
+
+.advanced-settings .advanced-settings-content input,
+.advanced-settings .advanced-settings-content select,
+.advanced-settings .advanced-settings-content textarea {
+    margin-top: 0.25rem; /* Smaller space between label and input */
+}

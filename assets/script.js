@@ -164,7 +164,7 @@ function updateLanguage(lang) {
             if (footerPersian) footerPersian.style.display = 'block';
             if (footerEnglish) footerEnglish.style.display = 'none';
 
-            if (pageTitle) pageTitle.textContent = 'مترجم SRT';
+            if (pageTitle) pageTitle.textContent = 'مترجم زیرنویس';
             if (uploadInstructions) uploadInstructions.textContent = 'فایل SRT را بارگذاری یا الصاق کنید، کلید API Gemini و زبان مقصد را ارائه دهید.';
             if (warningMessage) warningMessage.textContent = '⚠️ اگر در ایران هستید، برای دسترسی به API Gemini به دلیل تحریم، «استفاده از پروکسی» را در تنظیمات پیشرفته فعال کنید.';
             const advancedWarning = document.querySelector('.advanced-warning-message'); // Target advanced warning specifically
@@ -223,7 +223,7 @@ function updateLanguage(lang) {
             if (footerPersian) footerPersian.style.display = 'none';
             if (footerEnglish) footerEnglish.style.display = 'block';
 
-            if (pageTitle) pageTitle.textContent = 'SRT Translator';
+            if (pageTitle) pageTitle.textContent = 'Subtitle Translator';
             if (uploadInstructions) uploadInstructions.textContent = 'Upload an SRT file or paste content, provide your Gemini API key, and select the target language.';
             if (warningMessage) warningMessage.textContent = '⚠️ If in Iran, enable "Use Proxy" in Settings for Gemini API access due to sanctions.';
              const advancedWarning = document.querySelector('.advanced-warning-message');

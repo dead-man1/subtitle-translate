@@ -40,7 +40,12 @@
         </div>
 
         <p id="upload-instructions" class="instructions">
-            Upload an SRT file or paste content, provide your Gemini API key, and select the target language.
+            <!-- MODIFIED -->
+            Upload an SRT, VTT, SSA, or ASS file or paste SRT content, provide your Gemini API key, and select the target language.
+        </p>
+        <!-- Optional: Add a note about text pasting limitation -->
+        <p id="text-paste-note" class="note" style="text-align: center; margin-top: -1rem; margin-bottom: 1rem;">
+             Note: Pasting text currently only supports the SRT format. For VTT/SSA/ASS, please use file upload.
         </p>
         <p id="warning-message" class="warning">
            ⚠️ If in Iran, enable "Use Proxy" in Settings for Gemini API access due to sanctions.
@@ -62,14 +67,16 @@
 
             <!-- File Input Area -->
             <div id="file-input" class="form-group input-section">
-                <label id="file-label" class="form-label">Upload SRT File:</label>
-                <div id="dropzone-upload" class="dropzone">
-                    <div class="dz-message">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Drag & drop SRT file here<br>or click to browse</p>
-                    </div>
-                </div>
-            </div>
+                <!-- MODIFIED Label -->
+               <label id="file-label" class="form-label">Upload Subtitle File (SRT, VTT, SSA, ASS):</label>
+               <div id="dropzone-upload" class="dropzone">
+                   <div class="dz-message">
+                       <i class="fas fa-cloud-upload-alt"></i>
+                       <!-- MODIFIED Message Text -->
+                       <p>Drag & drop SRT/VTT/SSA/ASS file here<br>or click to browse</p>
+                   </div>
+               </div>
+           </div>
 
             <!-- Text Input Area -->
             <div id="text-input" class="form-group input-section" style="display: none;">

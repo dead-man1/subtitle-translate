@@ -10,7 +10,8 @@ This web tool allows you to translate SubRip Subtitle (.srt) files or pasted SRT
 
 **You can access the live version of this tool here:**
 
-**[https://itsyebekhe.github.io/subtitle-translate/](https://itsyebekhe.github.io/subtitle-translate/)**
+**[https:// dead-man1.github.io/subtitle-translate](https:// dead-man1.github.io/subtitle-translate/
+)**
 
 ### Features
 

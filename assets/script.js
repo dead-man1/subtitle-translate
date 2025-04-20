@@ -38,6 +38,7 @@ const baseDelayInput = document.getElementById('base_delay');
 const quotaDelayInput = document.getElementById('quota_delay');
 const chunkCountInput = document.getElementById('chunk_count');
 const modelSelect = document.getElementById('model');
+const donateButton = document.getElementById('donateButton');
 const temperatureInput = document.getElementById('temperature');
 const topPInput = document.getElementById('top_p');
 const topKInput = document.getElementById('top_k');
@@ -211,6 +212,11 @@ function updateLanguage(lang) {
             if (chunkCountLabel) chunkCountLabel.textContent = 'تعداد بخش‌ها:';
             const chunkCountNote = chunkCountLabel?.closest('.form-group')?.querySelector('.note');
             if(chunkCountNote) chunkCountNote.textContent = 'تقسیم SRT به این تعداد بخش (1-100).';
+            if (donateButton) {
+                donateButton.textContent = 'حمایت مالی با رمزارز';
+                 // Ensure it's visible (CSS might hide it initially if not)
+                donateButton.style.display = 'inline-block'; // Or 'block' depending on your layout preference
+            }
             const tempLabel = document.getElementById('temperature-label'); if (tempLabel) tempLabel.textContent = 'دما:';
             const tempNote = tempLabel?.closest('.form-group')?.querySelector('.note'); if(tempNote) tempNote.textContent = 'کنترل تصادفی بودن (0.0-2.0). مقادیر بالاتر = خلاقیت/تصادفی بیشتر.';
             const topPLabel = document.getElementById('top-p-label'); if (topPLabel) topPLabel.textContent = 'Top-P:';
@@ -271,6 +277,10 @@ function updateLanguage(lang) {
             if (chunkCountLabel) chunkCountLabel.textContent = 'Number of Chunks:';
             const chunkCountNote = chunkCountLabel?.closest('.form-group')?.querySelector('.note');
             if(chunkCountNote) chunkCountNote.textContent = 'Split SRT into this many parts (1-100).';
+            if (donateButton) {
+                donateButton.textContent = 'Donate with Crypto';
+                donateButton.style.display = 'inline-block'; // Or 'block'
+            }
              const tempLabel = document.getElementById('temperature-label'); if (tempLabel) tempLabel.textContent = 'Temperature:';
              const tempNote = tempLabel?.closest('.form-group')?.querySelector('.note'); if(tempNote) tempNote.textContent = 'Controls randomness (0.0-2.0). Higher values = more creative/random.';
              const topPLabel = document.getElementById('top-p-label'); if (topPLabel) topPLabel.textContent = 'Top-P:';

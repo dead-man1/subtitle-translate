@@ -115,7 +115,7 @@ const i18n = {
 };
 
 // --- Global Variables & State ---
-let currentLang = 'en'; // THIS IS FOR UI LANGUAGE ONLY ('en' or 'fa')
+let uiLang = 'en'; // *** FIX: Renamed variable for UI language ONLY ***
 let uploadedFile = null;
 let translationMemory = JSON.parse(localStorage.getItem('translationMemory') || '{}');
 let currentStep = 1;
@@ -127,7 +127,7 @@ let currentOriginalFormat = 'srt';
 let currentApiKey = '';
 let currentModel = 'gemini-1.5-flash-latest';
 let currentTemperature = 0.7;
-let currentTargetLangForRetry = ''; // Store the target language for retries
+let currentTargetLangForRetry = '';
 const proxyUrl = 'https://middleman.yebekhe.workers.dev';
 
 // --- DOM Element References ---
@@ -142,9 +142,9 @@ let myDropzone;
 // --- UI & WIZARD MANAGEMENT ---
 
 function updateLanguage(lang) {
-    currentLang = lang; // This correctly sets the UI language
+    uiLang = lang; // Use the renamed global variable
     const isRTL = lang === 'fa';
-    const translations = i18n[lang];
+    const translations = i18n[uiLang]; // Use the renamed global variable
     
     document.documentElement.lang = lang;
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
@@ -187,7 +187,7 @@ function updateLanguage(lang) {
     setText('#dropzone-upload .text-lg', 'dropzone');
     setText('#dropzone-upload .text-sm', 'dropzoneOr');
     setText('#dropzone-upload #choose-file-btn', 'dropzoneChoose');
-    setText('#file-feedback p:first-child', 'fileSelected'); // Target the text part specifically
+    setText('#file-feedback p:first-child span:first-child', 'fileSelected');
     setText('#remove-file span', 'remove');
     setPlaceholder('#srt_text', 'pastePlaceholder');
     setText('#text-input-container p', 'pasteNote');
@@ -204,7 +204,7 @@ function updateLanguage(lang) {
     setText('#results-area #download-container h3', 'successTitle');
     setText('#results-area #download-container p', 'successText');
     setText('#results-area #error-message h3', 'errorTitle');
-    setText('#start-new-translation', 'startNew');
+    setText('#start-new-translation span', 'startNew');
 
     localStorage.setItem('language', lang);
 }
@@ -296,8 +296,8 @@ function showError(message, type = 'error') {
     }
     
     const isSuccess = type === 'success';
-    // The 'currentLang' here refers to the UI language and is now safe to use.
-    titleEl.textContent = isSuccess ? i18n[currentLang].successTitle : i18n[currentLang].errorTitle;
+    // *** FIX: This now safely uses the UI language variable 'uiLang' ***
+    titleEl.textContent = isSuccess ? i18n[uiLang].successTitle : i18n[uiLang].errorTitle;
     iconEl.className = `fas text-xl mr-3 ${isSuccess ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'}`;
     errorMessageDiv.className = `mt-6 p-4 rounded-xl flex items-start border ${isSuccess ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700'}`;
     titleEl.className = `text-md font-bold ${isSuccess ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}`;
@@ -314,9 +314,9 @@ function hideError() {
 function resetUIForNewTranslation() {
     if (progressContainer) progressContainer.style.display = 'block';
     if (progressBar) progressBar.style.width = '0%';
-    if (progressText) progressText.textContent = `0% ${i18n[currentLang].progressComplete}`;
+    if (progressText) progressText.textContent = `0% ${i18n[uiLang].progressComplete}`;
     if (chunkStatusSpan) chunkStatusSpan.textContent = '...';
-    if (timeEstimateSpan) timeEstimateSpan.textContent = i18n[currentLang].progressEstimating;
+    if (timeEstimateSpan) timeEstimateSpan.textContent = i18n[uiLang].progressEstimating;
     
     const downloadContainer = document.getElementById('download-container');
     if (downloadContainer) downloadContainer.style.display = 'none';
@@ -332,28 +332,28 @@ function updateProgress(chunkIndex, totalChunks, startTime) {
     const currentDisplayChunk = chunkIndex + 1;
     const progressPercentage = totalChunks > 0 ? Math.round((currentDisplayChunk / totalChunks) * 100) : 0;
     progressBar.style.width = `${progressPercentage}%`;
-    progressText.textContent = `${progressPercentage}% ${i18n[currentLang].progressComplete}`;
+    progressText.textContent = `${progressPercentage}% ${i18n[uiLang].progressComplete}`;
     chunkStatusSpan.textContent = `Processing chunk: ${currentDisplayChunk}/${totalChunks}`;
 
     if (chunkIndex === 0 && startTime && totalChunks > 1) {
-        timeEstimateSpan.textContent = i18n[currentLang].progressCalculating;
+        timeEstimateSpan.textContent = i18n[uiLang].progressCalculating;
     } else if (firstChunkTime > 0 && chunkIndex > 0 && totalChunks > 1) {
         const remainingChunks = totalChunks - currentDisplayChunk;
         if (remainingChunks >= 0) {
             const estimatedRemainingTime = remainingChunks * firstChunkTime;
             const minutes = Math.floor(estimatedRemainingTime / 60);
             const seconds = Math.floor(estimatedRemainingTime % 60);
-            timeEstimateSpan.textContent = `~${minutes}m ${seconds}s ${i18n[currentLang].progressRemaining}`;
+            timeEstimateSpan.textContent = `~${minutes}m ${seconds}s ${i18n[uiLang].progressRemaining}`;
         }
     }
 }
 
 // --- PARSING, TRANSLATION, and CORE LOGIC ---
 function clearTranslationMemory() {
-    if (confirm(i18n[currentLang].clearMemoryConfirm)) {
+    if (confirm(i18n[uiLang].clearMemoryConfirm)) {
         translationMemory = {};
         localStorage.removeItem('translationMemory');
-        alert(i18n[currentLang].clearMemorySuccess);
+        alert(i18n[uiLang].clearMemorySuccess);
     }
 }
 
@@ -603,17 +603,13 @@ async function handleTranslate(event) {
     resultsArea.style.display = 'block';
     resetUIForNewTranslation();
 
-    // *** FIX: Use local variables for translation settings, don't overwrite globals ***
-    const translationApiKey = apiKeyInput.value.trim();
-    const translationTargetLang = langInput.value.trim();
-    const translationModel = modelSelect.value;
-    const translationTemperature = parseFloat(temperatureInput.value);
+    const targetLanguage = langInput.value.trim(); // Use a local variable for the translation language
 
-    // Store settings needed for potential retries
-    currentApiKey = translationApiKey;
-    currentModel = translationModel;
-    currentTemperature = translationTemperature;
-    currentTargetLangForRetry = translationTargetLang;
+    // Store settings needed for potential retries in global scope
+    currentApiKey = apiKeyInput.value.trim();
+    currentModel = modelSelect.value;
+    currentTemperature = parseFloat(temperatureInput.value);
+    currentTargetLangForRetry = targetLanguage;
     
     let subtitleContent = '';
     const inputMethod = selectFileInputBtn.classList.contains('bg-primary-600') ? 'file' : 'text';
@@ -647,7 +643,7 @@ async function handleTranslate(event) {
             progressContainer.style.display = 'none';
             showError("No translatable text found. Original file structure is preserved.", 'success');
             currentAllTranslatedEntries = allParsedEntries;
-            generateAndDisplayDownloadLink(translationTargetLang); return;
+            generateAndDisplayDownloadLink(targetLanguage); return;
         }
         
         const chunkCount = Math.min(20, translatableEntries.length);
@@ -661,7 +657,7 @@ async function handleTranslate(event) {
             updateProgress(i, totalChunks, i === 0 ? startTime : null);
             try {
                 const chunkStartTime = performance.now();
-                const translatedTexts = await translateChunk(chunks[i], translationApiKey, translationTargetLang, translationModel, translationTemperature);
+                const translatedTexts = await translateChunk(chunks[i], currentApiKey, targetLanguage, currentModel, currentTemperature);
                 if (i === 0) firstChunkTime = (performance.now() - chunkStartTime) / 1000;
                 chunks[i].forEach((entry, idx) => translatedTextMap.set(entry, translatedTexts[idx] || entry.text));
             } catch (chunkError) {
@@ -676,14 +672,14 @@ async function handleTranslate(event) {
             return translatable && translatedTextMap.has(translatable) ? { ...entry, text: translatedTextMap.get(translatable) } : entry;
         });
 
-        generateAndDisplayDownloadLink(translationTargetLang);
+        generateAndDisplayDownloadLink(targetLanguage);
         progressContainer.style.display = 'none';
         
         if (failedChunksData.length > 0) {
             showError(`Translation finished with ${failedChunksData.length} failed chunk(s).`);
             displayRetryButtons();
         } else {
-            showError(i18n[currentLang].successTitle, 'success');
+            showError(i18n[uiLang].successTitle, 'success');
         }
 
     } catch (error) {
@@ -703,7 +699,7 @@ function generateAndDisplayDownloadLink(targetLang) {
         const blob = new Blob([`\uFEFF${finalContent}`], { type: `${mimeType};charset=utf-8` });
         const url = URL.createObjectURL(blob);
         const downloadFileName = `${currentOriginalFileName}_${targetLang}.${currentOriginalFormat}`;
-        downloadContainer.innerHTML = `<a href="${url}" download="${downloadFileName}" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-colors"><i class="fas fa-download mr-2"></i>${i18n[currentLang].downloadFile}</a>`;
+        downloadContainer.innerHTML = `<a href="${url}" download="${downloadFileName}" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-colors"><i class="fas fa-download mr-2"></i>${i18n[uiLang].downloadFile}</a>`;
         downloadContainer.style.display = 'block';
     } catch (error) {
         showError("Could not generate the download file.");
@@ -719,14 +715,14 @@ function displayRetryButtons() {
         retryContainer.className = 'mt-6 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 rounded-lg';
         resultsArea.appendChild(retryContainer);
     }
-    retryContainer.innerHTML = `<p class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3">${i18n[currentLang].retryFailed}</p>`;
+    retryContainer.innerHTML = `<p class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3">${i18n[uiLang].retryFailed}</p>`;
     const buttonsContainer = document.createElement('div');
     buttonsContainer.className = 'flex flex-wrap gap-2';
     failedChunksData.sort((a,b)=>a.index-b.index).forEach(failedChunk => {
         const button = document.createElement('button');
         button.className = 'px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md';
         button.dataset.chunkIndex = failedChunk.index;
-        button.textContent = `${i18n[currentLang].retryButton} ${failedChunk.index + 1}`;
+        button.textContent = `${i18n[uiLang].retryButton} ${failedChunk.index + 1}`;
         button.addEventListener('click', handleManualRetry);
         buttonsContainer.appendChild(button);
     });
@@ -736,7 +732,7 @@ function displayRetryButtons() {
 async function handleManualRetry(event) {
     const button = event.target;
     button.disabled = true;
-    button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${i18n[currentLang].retryingButton}`;
+    button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${i18n[uiLang].retryingButton}`;
     
     const internalChunkIndex = parseInt(button.dataset.chunkIndex, 10);
     const failedChunkInfo = failedChunksData.find(fc => fc.index === internalChunkIndex);
@@ -760,7 +756,7 @@ async function handleManualRetry(event) {
     } catch (retryError) {
         showError(`Retry failed for Chunk ${internalChunkIndex + 1}: ${retryError.message}`);
         button.disabled = false;
-        button.textContent = `${i18n[currentLang].retryButton} ${internalChunkIndex + 1}`;
+        button.textContent = `${i18n[uiLang].retryButton} ${internalChunkIndex + 1}`;
     }
 }
 
@@ -812,7 +808,7 @@ document.addEventListener('DOMContentLoaded', () => {
     goToStep(1);
 
     // Attach Event Listeners
-    languageToggle.addEventListener('click', () => updateLanguage(currentLang === 'en' ? 'fa' : 'en'));
+    languageToggle.addEventListener('click', () => updateLanguage(uiLang === 'en' ? 'fa' : 'en'));
     clearMemoryButton.addEventListener('click', clearTranslationMemory);
     togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
     rememberMeCheckbox.addEventListener('change', saveApiKey);

@@ -767,7 +767,6 @@ async function handleManualRetry(event) {
 document.addEventListener('DOMContentLoaded', () => {
     // Populate DOM references
     htmlElement = document.documentElement;
-    themeToggle = document.getElementById('themeToggle');
     languageToggle = document.getElementById('languageToggle');
     clearMemoryButton = document.getElementById('clear-memory-button');
     translateForm = document.getElementById('translate-form');
@@ -807,13 +806,11 @@ document.addEventListener('DOMContentLoaded', () => {
     removeFileBtn = document.getElementById('remove-file');
 
     // Initial Page Setup
-    updateTheme(localStorage.getItem('theme') === 'light'); // Default to dark
     updateLanguage(localStorage.getItem('language') === 'fa' ? 'fa' : 'en');
     loadApiKey();
     goToStep(1);
 
     // Attach Event Listeners
-    themeToggle.addEventListener('click', () => updateTheme(!htmlElement.classList.contains('dark')));
     languageToggle.addEventListener('click', () => updateLanguage(currentLang === 'en' ? 'fa' : 'en'));
     clearMemoryButton.addEventListener('click', clearTranslationMemory);
     togglePasswordBtn.addEventListener('click', togglePasswordVisibility);

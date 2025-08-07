@@ -855,31 +855,37 @@ document.addEventListener('DOMContentLoaded', () => {
     startNewTranslationBtn.addEventListener('click', resetWizard);
 
     // Dropzone Configuration
-    Dropzone.autoDiscover = false;
-    if (dropzoneElement) {
-        myDropzone = new Dropzone(dropzoneElement.parentElement, { // Attach to container for better click handling
-            url: "#", autoProcessQueue: false, acceptedFiles: ".srt,.vtt,.ssa,.ass", maxFiles: 1, clickable: '#dropzone-upload',
-            init: function() {
-                this.on("addedfile", file => {
-                    if (this.files.length > 1) this.removeFile(this.files[0]);
-                    uploadedFile = file;
-                    dropzoneElement.style.display = 'none';
-                    fileFeedbackDiv.style.display = 'block';
-                    fileNameSpan.textContent = file.name;
-                    checkStep2Completion();
-                });
-                this.on("removedfile", () => {
-                    uploadedFile = null;
-                    dropzoneElement.style.display = 'block';
-                    fileFeedbackDiv.style.display = 'none';
-                    fileNameSpan.textContent = '';
-                    checkStep2Completion();
-                });
-                this.on("error", (file, errorMsg) => {
-                    showError(typeof errorMsg === 'string' ? errorMsg : "Invalid file type.");
-                    this.removeFile(file);
-                });
-            }
-        });
-    }
-});
+Dropzone.autoDiscover = false;
+if (dropzoneElement) {
+    myDropzone = new Dropzone(fileInputContainer, { // Attach to the main container for this step
+        url: "#", // Dummy URL
+        autoProcessQueue: false,
+        acceptedFiles: ".srt,.vtt,.ssa,.ass",
+        maxFiles: 1,
+        clickable: ['#dropzone-upload', '#choose-file-btn'], 
+        previewsContainer: false, // We are handling previews manually with our #file-feedback div
+        init: function() {
+            this.on("addedfile", file => {
+                if (this.files.length > 1) {
+                    this.removeFile(this.files[0]);
+                }
+                uploadedFile = file;
+                dropzoneElement.style.display = 'none';
+                fileFeedbackDiv.style.display = 'block';
+                fileNameSpan.textContent = file.name;
+                checkStep2Completion();
+            });
+            this.on("removedfile", () => {
+                uploadedFile = null;
+                dropzoneElement.style.display = 'block';
+                fileFeedbackDiv.style.display = 'none';
+                fileNameSpan.textContent = '';
+                checkStep2Completion();
+            });
+            this.on("error", (file, errorMsg) => {
+                showError(typeof errorMsg === 'string' ? errorMsg : "Invalid file type.");
+                this.removeFile(file);
+            });
+        }
+    });
+}

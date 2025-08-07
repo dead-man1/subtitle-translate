@@ -115,7 +115,7 @@ const i18n = {
 };
 
 // --- Global Variables & State ---
-let currentLang = 'en';
+let currentLang = 'en'; // THIS IS FOR UI LANGUAGE ONLY ('en' or 'fa')
 let uploadedFile = null;
 let translationMemory = JSON.parse(localStorage.getItem('translationMemory') || '{}');
 let currentStep = 1;
@@ -127,6 +127,7 @@ let currentOriginalFormat = 'srt';
 let currentApiKey = '';
 let currentModel = 'gemini-1.5-flash-latest';
 let currentTemperature = 0.7;
+let currentTargetLangForRetry = ''; // Store the target language for retries
 const proxyUrl = 'https://middleman.yebekhe.workers.dev';
 
 // --- DOM Element References ---
@@ -141,7 +142,7 @@ let myDropzone;
 // --- UI & WIZARD MANAGEMENT ---
 
 function updateLanguage(lang) {
-    currentLang = lang;
+    currentLang = lang; // This correctly sets the UI language
     const isRTL = lang === 'fa';
     const translations = i18n[lang];
     
@@ -186,8 +187,8 @@ function updateLanguage(lang) {
     setText('#dropzone-upload .text-lg', 'dropzone');
     setText('#dropzone-upload .text-sm', 'dropzoneOr');
     setText('#dropzone-upload #choose-file-btn', 'dropzoneChoose');
-    setText('#file-feedback p', 'fileSelected');
-    setText('#remove-file', 'remove');
+    setText('#file-feedback p:first-child', 'fileSelected'); // Target the text part specifically
+    setText('#remove-file span', 'remove');
     setPlaceholder('#srt_text', 'pastePlaceholder');
     setText('#text-input-container p', 'pasteNote');
     
@@ -197,7 +198,7 @@ function updateLanguage(lang) {
     setText('details summary h4', 'advancedSettings');
     setText('details .bg-amber-50 p', 'advancedWarning');
     setText('label[for="useProxyCheckbox"]', 'useProxyLabel');
-    setText('#submit-button .button-text span', 'translateNow');
+    setText('#submit-button .button-text', 'translateNow');
     
     setText('#results-area #progress-container h3', 'progressTitle');
     setText('#results-area #download-container h3', 'successTitle');
@@ -295,6 +296,7 @@ function showError(message, type = 'error') {
     }
     
     const isSuccess = type === 'success';
+    // The 'currentLang' here refers to the UI language and is now safe to use.
     titleEl.textContent = isSuccess ? i18n[currentLang].successTitle : i18n[currentLang].errorTitle;
     iconEl.className = `fas text-xl mr-3 ${isSuccess ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'}`;
     errorMessageDiv.className = `mt-6 p-4 rounded-xl flex items-start border ${isSuccess ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700'}`;
@@ -520,11 +522,11 @@ function splitIntoChunks(array, chunkCount) {
     return chunks;
 }
 
-async function translateChunk(chunk, apiKey, lang, model, temperature) {
+async function translateChunk(chunk, apiKey, targetLang, model, temperature) {
     if (!chunk || chunk.length === 0) return [];
     
     const sourceTexts = chunk.map(entry => entry.text);
-    const cachedTranslations = sourceTexts.map(text => findInTranslationMemory(text, lang));
+    const cachedTranslations = sourceTexts.map(text => findInTranslationMemory(text, targetLang));
     const textsToTranslateMap = new Map();
     sourceTexts.forEach((text, index) => {
         if (cachedTranslations[index] === undefined && text?.trim()) {
@@ -542,7 +544,7 @@ async function translateChunk(chunk, apiKey, lang, model, temperature) {
     const separator = "\n---\n";
     const indicesToTranslate = Array.from(textsToTranslateMap.keys());
     const combinedText = indicesToTranslate.map(index => textsToTranslateMap.get(index)).join(separator);
-    const effectivePrompt = `Translate the following subtitle text into ${lang}. Maintain the original meaning, natural conversational tone, and appropriate length for subtitles. Respond ONLY with the translated text lines, separated by "---".\n\n${combinedText}`;
+    const effectivePrompt = `Translate the following subtitle text into ${targetLang}. Maintain the original meaning, natural conversational tone, and appropriate length for subtitles. Respond ONLY with the translated text lines, separated by "---".\n\n${combinedText}`;
 
     const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     const targetUrl = useProxyCheckbox.checked ? proxyUrl : directUrl;
@@ -581,7 +583,7 @@ async function translateChunk(chunk, apiKey, lang, model, temperature) {
             translatedLines.forEach((translatedText, i) => {
                 const originalIndex = indicesToTranslate[i];
                 finalChunkTranslations[originalIndex] = translatedText.trim();
-                updateTranslationMemory(sourceTexts[originalIndex], translatedText.trim(), lang);
+                updateTranslationMemory(sourceTexts[originalIndex], translatedText.trim(), targetLang);
             });
             await new Promise(resolve => setTimeout(resolve, 1000));
             return finalChunkTranslations;
@@ -601,10 +603,17 @@ async function handleTranslate(event) {
     resultsArea.style.display = 'block';
     resetUIForNewTranslation();
 
-    currentApiKey = apiKeyInput.value.trim();
-    currentLang = langInput.value.trim();
-    currentModel = modelSelect.value;
-    currentTemperature = parseFloat(temperatureInput.value);
+    // *** FIX: Use local variables for translation settings, don't overwrite globals ***
+    const translationApiKey = apiKeyInput.value.trim();
+    const translationTargetLang = langInput.value.trim();
+    const translationModel = modelSelect.value;
+    const translationTemperature = parseFloat(temperatureInput.value);
+
+    // Store settings needed for potential retries
+    currentApiKey = translationApiKey;
+    currentModel = translationModel;
+    currentTemperature = translationTemperature;
+    currentTargetLangForRetry = translationTargetLang;
     
     let subtitleContent = '';
     const inputMethod = selectFileInputBtn.classList.contains('bg-primary-600') ? 'file' : 'text';
@@ -638,7 +647,7 @@ async function handleTranslate(event) {
             progressContainer.style.display = 'none';
             showError("No translatable text found. Original file structure is preserved.", 'success');
             currentAllTranslatedEntries = allParsedEntries;
-            generateAndDisplayDownloadLink(); return;
+            generateAndDisplayDownloadLink(translationTargetLang); return;
         }
         
         const chunkCount = Math.min(20, translatableEntries.length);
@@ -652,7 +661,7 @@ async function handleTranslate(event) {
             updateProgress(i, totalChunks, i === 0 ? startTime : null);
             try {
                 const chunkStartTime = performance.now();
-                const translatedTexts = await translateChunk(chunks[i], currentApiKey, currentLang, currentModel, currentTemperature);
+                const translatedTexts = await translateChunk(chunks[i], translationApiKey, translationTargetLang, translationModel, translationTemperature);
                 if (i === 0) firstChunkTime = (performance.now() - chunkStartTime) / 1000;
                 chunks[i].forEach((entry, idx) => translatedTextMap.set(entry, translatedTexts[idx] || entry.text));
             } catch (chunkError) {
@@ -667,7 +676,7 @@ async function handleTranslate(event) {
             return translatable && translatedTextMap.has(translatable) ? { ...entry, text: translatedTextMap.get(translatable) } : entry;
         });
 
-        generateAndDisplayDownloadLink();
+        generateAndDisplayDownloadLink(translationTargetLang);
         progressContainer.style.display = 'none';
         
         if (failedChunksData.length > 0) {
@@ -685,7 +694,7 @@ async function handleTranslate(event) {
     }
 }
 
-function generateAndDisplayDownloadLink() {
+function generateAndDisplayDownloadLink(targetLang) {
     const downloadContainer = document.getElementById('download-container');
     if (!downloadContainer || !currentAllTranslatedEntries) return;
     try {
@@ -693,8 +702,8 @@ function generateAndDisplayDownloadLink() {
         const mimeType = getMimeType(currentOriginalFormat);
         const blob = new Blob([`\uFEFF${finalContent}`], { type: `${mimeType};charset=utf-8` });
         const url = URL.createObjectURL(blob);
-        const downloadFileName = `${currentOriginalFileName}_${langInput.value}.${currentOriginalFormat}`;
-        downloadLinkContainer.innerHTML = `<a href="${url}" download="${downloadFileName}" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-colors"><i class="fas fa-download mr-2"></i>${i18n[currentLang].downloadFile}</a>`;
+        const downloadFileName = `${currentOriginalFileName}_${targetLang}.${currentOriginalFormat}`;
+        downloadContainer.innerHTML = `<a href="${url}" download="${downloadFileName}" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-colors"><i class="fas fa-download mr-2"></i>${i18n[currentLang].downloadFile}</a>`;
         downloadContainer.style.display = 'block';
     } catch (error) {
         showError("Could not generate the download file.");
@@ -734,7 +743,7 @@ async function handleManualRetry(event) {
     if (!failedChunkInfo) return;
     
     try {
-        const translatedTexts = await translateChunk(failedChunkInfo.chunkData, currentApiKey, currentLang, currentModel, currentTemperature);
+        const translatedTexts = await translateChunk(failedChunkInfo.chunkData, currentApiKey, currentTargetLangForRetry, currentModel, currentTemperature);
         const retriedMap = new Map();
         failedChunkInfo.chunkData.forEach((entry, idx) => retriedMap.set(entry, translatedTexts[idx] || entry.text));
         
@@ -746,7 +755,7 @@ async function handleManualRetry(event) {
         failedChunksData = failedChunksData.filter(fc => fc.index !== internalChunkIndex);
         showError(`Chunk ${internalChunkIndex + 1} successfully translated!`, 'success');
         button.remove();
-        generateAndDisplayDownloadLink();
+        generateAndDisplayDownloadLink(currentTargetLangForRetry);
         if (failedChunksData.length === 0) document.getElementById('retry-container')?.remove();
     } catch (retryError) {
         showError(`Retry failed for Chunk ${internalChunkIndex + 1}: ${retryError.message}`);

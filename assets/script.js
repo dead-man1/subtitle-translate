@@ -130,7 +130,7 @@ let currentTemperature = 0.7;
 const proxyUrl = 'https://middleman.yebekhe.workers.dev';
 
 // --- DOM Element References ---
-let htmlElement, themeToggle, languageToggle, clearMemoryButton, translateForm, dropzoneElement, srtTextInput, apiKeyInput, rememberMeCheckbox, useProxyCheckbox, togglePasswordBtn, langInput, modelSelect, temperatureInput, progressContainer, progressBar, progressText, chunkStatusSpan, timeEstimateSpan, downloadLinkContainer, errorMessageDiv, submitButton;
+let htmlElement, languageToggle, clearMemoryButton, translateForm, dropzoneElement, srtTextInput, apiKeyInput, rememberMeCheckbox, useProxyCheckbox, togglePasswordBtn, langInput, modelSelect, temperatureInput, progressContainer, progressBar, progressText, chunkStatusSpan, timeEstimateSpan, downloadLinkContainer, errorMessageDiv, submitButton;
 let stepSections, stepIndicators, formContainer, resultsArea, startNewTranslationBtn;
 let nextToStep2Btn, nextToStep3Btn, backToStep1Btn, backToStep2Btns;
 let selectFileInputBtn, selectTextInputBtn, fileInputContainer, textInputContainer;
@@ -260,15 +260,6 @@ function resetWizard() {
     goToStep(1);
     checkStep1Completion();
     checkStep2Completion();
-}
-
-function updateTheme(setLight) {
-    const themeIcon = themeToggle?.querySelector('i');
-    if (!themeIcon) return;
-    htmlElement.classList.toggle('dark', !setLight);
-    themeIcon.classList.toggle('fa-sun', setLight);
-    themeIcon.classList.toggle('fa-moon', !setLight);
-    localStorage.setItem('theme', setLight ? 'light' : 'dark');
 }
 
 function togglePasswordVisibility() {

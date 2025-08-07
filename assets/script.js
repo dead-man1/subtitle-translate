@@ -1,59 +1,240 @@
-// --- Global Variables & Initial Setup ---
+// --- I18N DICTIONARY ---
+const i18n = {
+    en: {
+        // General
+        'pageTitle': 'Subtitle Translator',
+        'pageSubtitle': 'AI-Powered Translation',
+        'mainHeading': 'Translate Subtitles in 3 Easy Steps',
+        'mainSubheading': 'Follow the steps below to get your subtitles translated by AI.',
+        'next': 'Next',
+        'back': 'Back',
+        'remove': 'Remove',
+        // Step Navigator
+        'step1Name': 'API Setup',
+        'step2Name': 'Add Content',
+        'step3Name': 'Translate',
+        // Step 1: API
+        'step1Title': 'Step 1: Configure Your API Key',
+        'step1Description': 'This tool uses the Gemini API. Please provide your API key to proceed. Your key is stored locally in your browser and is never sent to our servers.',
+        'apiKeyLabel': 'Gemini API Key',
+        'apiKeyPlaceholder': 'Enter your Gemini API key',
+        'rememberKey': 'Remember my key',
+        'getApiKeyLink': "Get your free key from <a href='https://aistudio.google.com/app/apikey' target='_blank' class='font-medium underline hover:text-blue-600'>Google AI Studio</a>.",
+        // Step 2: Content
+        'step2Title': 'Step 2: Add Your Subtitle Content',
+        'fileUpload': 'File Upload',
+        'pasteText': 'Paste Text',
+        'dropzone': "Drag & drop SRT, VTT, SSA, or ASS file",
+        'dropzoneOr': "or",
+        'dropzoneChoose': "Choose File",
+        'fileSelected': "File selected:",
+        'pastePlaceholder': "Paste your SRT content here...",
+        'pasteNote': "Note: Only SRT format is supported for text input.",
+        // Step 3: Translate
+        'step3Title': 'Step 3: Finalize and Translate',
+        'targetLangLabel': 'Target Language',
+        'targetLangPlaceholder': 'e.g., Spanish, French, Japanese',
+        'advancedSettings': 'Advanced Settings',
+        'advancedWarning': 'Adjusting these settings can affect performance, cost, and quality. Proceed with caution.',
+        'useProxyLabel': 'Use Proxy (For users in sanctioned regions)',
+        'translateNow': 'Translate Now',
+        // Results Area
+        'progressTitle': 'Translation in Progress...',
+        'progressComplete': 'Complete',
+        'progressEstimating': 'Estimating...',
+        'progressCalculating': 'Calculating...',
+        'progressRemaining': 'remaining',
+        'successTitle': 'Translation Complete!',
+        'successText': 'Your translated file is ready for download.',
+        'errorTitle': 'An Error Occurred',
+        'startNew': 'Start a New Translation',
+        'downloadFile': 'Download Translated File',
+        'retryFailed': 'Retry Failed Chunks:',
+        'retryButton': 'Retry Chunk',
+        'retryingButton': 'Retrying...',
+        // Alerts & Confirmations
+        'clearMemoryConfirm': 'Are you sure you want to clear all saved translations from memory?',
+        'clearMemorySuccess': 'Translation memory cleared!',
+    },
+    fa: {
+        // General
+        'pageTitle': 'مترجم زیرنویس',
+        'pageSubtitle': 'ترجمه با هوش مصنوعی',
+        'mainHeading': 'ترجمه زیرنویس در ۳ مرحله ساده',
+        'mainSubheading': 'برای ترجمه زیرنویس خود توسط هوش مصنوعی، مراحل زیر را دنبال کنید.',
+        'next': 'بعدی',
+        'back': 'قبلی',
+        'remove': 'حذف',
+        // Step Navigator
+        'step1Name': 'تنظیم API',
+        'step2Name': 'افزودن محتوا',
+        'step3Name': 'ترجمه',
+        // Step 1: API
+        'step1Title': 'مرحله ۱: کلید API خود را پیکربندی کنید',
+        'step1Description': 'این ابزار از Gemini API استفاده می‌کند. لطفاً برای ادامه، کلید API خود را ارائه دهید. کلید شما به صورت محلی در مرورگرتان ذخیره می‌شود و هرگز به سرورهای ما ارسال نمی‌گردد.',
+        'apiKeyLabel': 'کلید API Gemini',
+        'apiKeyPlaceholder': 'کلید API خود را اینجا وارد کنید',
+        'rememberKey': 'کلید مرا به خاطر بسپار',
+        'getApiKeyLink': "کلید رایگان خود را از <a href='https://aistudio.google.com/app/apikey' target='_blank' class='font-medium underline hover:text-blue-600'>Google AI Studio</a> دریافت کنید.",
+        // Step 2: Content
+        'step2Title': 'مرحله ۲: محتوای زیرنویس خود را اضافه کنید',
+        'fileUpload': 'بارگذاری فایل',
+        'pasteText': 'چسباندن متن',
+        'dropzone': "فایل SRT، VTT، SSA یا ASS را بکشید و رها کنید",
+        'dropzoneOr': "یا",
+        'dropzoneChoose': "انتخاب فایل",
+        'fileSelected': "فایل انتخاب شد:",
+        'pastePlaceholder': "محتوای SRT خود را اینجا بچسبانید...",
+        'pasteNote': "توجه: برای چسباندن متن فقط از فرمت SRT پشتیبانی می‌شود.",
+        // Step 3: Translate
+        'step3Title': 'مرحله ۳: نهایی‌سازی و ترجمه',
+        'targetLangLabel': 'زبان مقصد',
+        'targetLangPlaceholder': 'مثال: اسپانیایی، فرانسوی، ژاپنی',
+        'advancedSettings': 'تنظیمات پیشرفته',
+        'advancedWarning': 'تنظیم این پارامترها می‌تواند بر عملکرد، هزینه و کیفیت ترجمه تأثیر بگذارد. با احتیاط عمل کنید.',
+        'useProxyLabel': 'استفاده از پروکسی (برای کاربران در مناطق تحریم شده)',
+        'translateNow': 'شروع ترجمه',
+        // Results Area
+        'progressTitle': 'در حال ترجمه...',
+        'progressComplete': 'تکمیل شد',
+        'progressEstimating': 'در حال تخمین...',
+        'progressCalculating': 'در حال محاسبه...',
+        'progressRemaining': 'باقیمانده',
+        'successTitle': 'ترجمه کامل شد!',
+        'successText': 'فایل ترجمه شده شما برای دانلود آماده است.',
+        'errorTitle': 'خطایی روی داد',
+        'startNew': 'شروع ترجمه جدید',
+        'downloadFile': 'دانلود فایل ترجمه شده',
+        'retryFailed': 'تلاش مجدد برای بخش‌های ناموفق:',
+        'retryButton': 'تلاش مجدد بخش',
+        'retryingButton': 'در حال تلاش...',
+        // Alerts & Confirmations
+        'clearMemoryConfirm': 'آیا مطمئن هستید که می‌خواهید تمام ترجمه‌های ذخیره شده در حافظه را پاک کنید؟',
+        'clearMemorySuccess': 'حافظه ترجمه پاک شد!',
+    }
+};
+
+// --- Global Variables & State ---
+let currentLang = 'en';
 let uploadedFile = null;
 let translationMemory = JSON.parse(localStorage.getItem('translationMemory') || '{}');
-
-// --- State Management for Wizard and Translation ---
 let currentStep = 1;
 let firstChunkTime = 0;
 let failedChunksData = [];
 let currentAllTranslatedEntries = [];
 let currentOriginalFileName = 'translation';
 let currentOriginalFormat = 'srt';
-let currentLang = 'English';
 let currentApiKey = '';
-let currentBaseDelay = 1000;
-let currentQuotaDelay = 60000;
 let currentModel = 'gemini-1.5-flash-latest';
-let currentPromptTemplate = '';
 let currentTemperature = 0.7;
-let currentTopP = 0.95;
-let currentTopK = 40;
-let currentMaxOutputTokens = 8192;
-let currentStopSequencesStr = '';
-
 const proxyUrl = 'https://middleman.yebekhe.workers.dev';
 
-// --- DOM Element References (to be populated on DOMContentLoaded) ---
-let htmlElement, themeToggle, languageToggle, clearMemoryButton, translateForm, dropzoneElement, srtTextInput, apiKeyInput, rememberMeCheckbox, useProxyCheckbox, togglePasswordBtn, langInput, modelSelect, temperatureInput, topPInput, topKInput, maxOutputTokensInput, stopSequencesInput, translationPromptTextarea, progressContainer, progressBar, progressText, chunkStatusSpan, timeEstimateSpan, downloadLinkContainer, errorMessageDiv, submitButton, pageTitle, uploadInstructions;
+// --- DOM Element References ---
+let htmlElement, themeToggle, languageToggle, clearMemoryButton, translateForm, dropzoneElement, srtTextInput, apiKeyInput, rememberMeCheckbox, useProxyCheckbox, togglePasswordBtn, langInput, modelSelect, temperatureInput, progressContainer, progressBar, progressText, chunkStatusSpan, timeEstimateSpan, downloadLinkContainer, errorMessageDiv, submitButton;
 let stepSections, stepIndicators, formContainer, resultsArea, startNewTranslationBtn;
 let nextToStep2Btn, nextToStep3Btn, backToStep1Btn, backToStep2Btns;
 let selectFileInputBtn, selectTextInputBtn, fileInputContainer, textInputContainer;
 let fileFeedbackDiv, fileNameSpan, removeFileBtn, errorContentDiv;
 let myDropzone;
 
-// --- WIZARD NAVIGATION LOGIC ---
+
+// --- UI & WIZARD MANAGEMENT ---
+
+function updateLanguage(lang) {
+    currentLang = lang;
+    const isRTL = lang === 'fa';
+    const translations = i18n[lang];
+    
+    document.documentElement.lang = lang;
+    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+
+    // Helper to set text content
+    const setText = (selector, key) => {
+        const element = document.querySelector(selector);
+        if (element) element.textContent = translations[key];
+    };
+    const setHtml = (selector, key) => {
+        const element = document.querySelector(selector);
+        if (element) element.innerHTML = translations[key];
+    };
+    const setPlaceholder = (selector, key) => {
+        const element = document.querySelector(selector);
+        if (element) element.placeholder = translations[key];
+    };
+
+    // Apply translations
+    setText('#page-title', 'pageTitle');
+    setText('#page-title + p', 'pageSubtitle');
+    setText('#form-container h2', 'mainHeading');
+    setText('#upload-instructions', 'mainSubheading');
+
+    document.querySelectorAll('.next-btn-text').forEach(el => el.textContent = translations['next']);
+    document.querySelectorAll('.back-btn-text').forEach(el => el.textContent = translations['back']);
+    
+    // Step Navigator
+    setText('#step-1-indicator span:last-child', 'step1Name');
+    setText('#step-2-indicator span:last-child', 'step2Name');
+    setText('#step-3-indicator span:last-child', 'step3Name');
+    
+    // Step 1
+    setText('#step-1 h3', 'step1Title');
+    setText('#step-1 .space-y-4 > p', 'step1Description');
+    setText('label[for="api_key"]', 'apiKeyLabel');
+    setPlaceholder('#api_key', 'apiKeyPlaceholder');
+    setText('label[for="remember_me"]', 'rememberKey');
+    setHtml('#step-1 .bg-blue-50 p', 'getApiKeyLink');
+
+    // Step 2
+    setText('#step-2 h3', 'step2Title');
+    setText('#select-file-input', 'fileUpload');
+    setText('#select-text-input', 'pasteText');
+    setText('#dropzone-upload .text-lg', 'dropzone');
+    setText('#dropzone-upload .text-sm', 'dropzoneOr');
+    setText('#dropzone-upload .inline-block', 'dropzoneChoose');
+    setText('#file-feedback p', 'fileSelected');
+    setText('#remove-file', 'remove');
+    setPlaceholder('#srt_text', 'pastePlaceholder');
+    setText('#text-input-container p', 'pasteNote');
+    
+    // Step 3
+    setText('#step-3 h3', 'step3Title');
+    setText('label[for="lang-input"]', 'targetLangLabel');
+    setPlaceholder('#lang-input', 'targetLangPlaceholder');
+    setText('details[open] summary h4', 'advancedSettings');
+    setText('details:not([open]) summary h4', 'advancedSettings');
+    setText('details .bg-amber-50 p', 'advancedWarning');
+    setText('label[for="useProxyCheckbox"]', 'useProxyLabel');
+    setText('#submit-button .button-text span', 'translateNow');
+    
+    // Results
+    setText('#results-area #progress-container h3', 'progressTitle');
+    setText('#results-area #download-container h3', 'successTitle');
+    setText('#results-area #download-container p', 'successText');
+    setText('#results-area #error-message h3', 'errorTitle');
+    setText('#start-new-translation', 'startNew');
+
+    localStorage.setItem('language', lang);
+}
+
 function goToStep(stepNumber) {
     currentStep = stepNumber;
     stepSections.forEach(section => section.classList.remove('active'));
-    const targetSection = document.getElementById(`step-${stepNumber}`);
-    if (targetSection) {
-        targetSection.classList.add('active');
-    }
+    document.getElementById(`step-${stepNumber}`)?.classList.add('active');
 
     stepIndicators.forEach((indicator, index) => {
         const step = index + 1;
         const textSpans = indicator.querySelectorAll('span');
-        indicator.classList.remove('border-primary-600', 'border-green-500', 'border-gray-200', 'dark:border-gray-700');
-        textSpans.forEach(span => span.classList.remove('text-primary-600', 'text-green-600', 'text-gray-500', 'dark:text-gray-400', 'dark:text-green-400'));
+        indicator.className = 'group flex flex-col py-2 pl-4 md:border-l-0 md:border-t-4 md:pl-0 md:pt-4 md:pb-0'; // Reset classes
+        textSpans.forEach(span => span.className = 'text-sm font-medium'); // Reset text classes
 
         if (step < stepNumber) { // Completed
-            indicator.classList.add('border-green-500');
+            indicator.classList.add('border-l-4', 'md:border-t-4', 'border-green-500');
             textSpans.forEach(span => span.classList.add('text-green-600', 'dark:text-green-400'));
         } else if (step === stepNumber) { // Active
-            indicator.classList.add('border-primary-600');
+            indicator.classList.add('border-l-4', 'md:border-t-4', 'border-primary-600');
             textSpans.forEach(span => span.classList.add('text-primary-600'));
         } else { // Future
-            indicator.classList.add('border-gray-200', 'dark:border-gray-700');
+            indicator.classList.add('border-l-4', 'md:border-t-4', 'border-gray-200', 'dark:border-gray-700');
             textSpans.forEach(span => span.classList.add('text-gray-500', 'dark:text-gray-400'));
         }
     });
@@ -75,16 +256,12 @@ function resetWizard() {
     if (formContainer) formContainer.style.display = 'block';
     if (myDropzone) myDropzone.removeAllFiles(true);
     if (srtTextInput) srtTextInput.value = '';
-
-    if (fileFeedbackDiv) fileFeedbackDiv.style.display = 'none';
-    if (dropzoneElement) dropzoneElement.style.display = 'block';
-
+    
     goToStep(1);
     checkStep1Completion();
     checkStep2Completion();
 }
 
-// --- CORE UTILITY FUNCTIONS ---
 function updateTheme(setLight) {
     const themeIcon = themeToggle?.querySelector('i');
     if (!themeIcon) return;
@@ -92,15 +269,6 @@ function updateTheme(setLight) {
     themeIcon.classList.toggle('fa-sun', setLight);
     themeIcon.classList.toggle('fa-moon', !setLight);
     localStorage.setItem('theme', setLight ? 'light' : 'dark');
-}
-
-function updateLanguage(lang) {
-    // This is a simplified i18n handler. Expand with a proper library or more key-value pairs for full translation.
-    const isRTL = lang === 'Persian';
-    document.documentElement.lang = isRTL ? 'fa' : 'en';
-    if (pageTitle) pageTitle.textContent = isRTL ? 'مترجم زیرنویس' : 'Subtitle Translator';
-    if (uploadInstructions) uploadInstructions.textContent = isRTL ? 'در ۳ مرحله ساده زیرنویس خود را ترجمه کنید' : 'Translate your subtitles in 3 easy steps';
-    localStorage.setItem('language', lang);
 }
 
 function togglePasswordVisibility() {
@@ -136,32 +304,22 @@ function loadApiKey() {
 
 function showError(message, type = 'error') {
     if (!errorMessageDiv || !errorContentDiv) return;
-    
     const titleEl = errorMessageDiv.querySelector('h3');
     const iconEl = errorMessageDiv.querySelector('i');
-    
     if (!message) {
         errorMessageDiv.style.display = 'none';
         return;
     }
-
-    errorMessageDiv.className = 'mt-6 p-4 rounded-xl flex items-start'; // Reset classes
-    iconEl.className = 'fas fa-exclamation-circle text-xl'; // Reset icon classes
-
-    if (type === 'success') {
-        errorMessageDiv.classList.add('bg-green-50', 'dark:bg-green-900/30', 'border', 'border-green-200', 'dark:border-green-700');
-        iconEl.classList.add('text-green-500', 'dark:text-green-400', 'fa-check-circle');
-        titleEl.className = 'text-md font-bold text-green-800 dark:text-green-200';
-        titleEl.textContent = 'Success';
-    } else { // 'error'
-        errorMessageDiv.classList.add('bg-red-50', 'dark:bg-red-900/30', 'border', 'border-red-200', 'dark:border-red-700');
-        iconEl.classList.add('text-red-500', 'dark:text-red-400');
-        titleEl.className = 'text-md font-bold text-red-800 dark:text-red-200';
-        titleEl.textContent = 'An Error Occurred';
-    }
+    
+    const isSuccess = type === 'success';
+    titleEl.textContent = isSuccess ? i18n[currentLang].successTitle : i18n[currentLang].errorTitle;
+    iconEl.className = `fas text-xl mr-3 ${isSuccess ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'}`;
+    errorMessageDiv.className = `mt-6 p-4 rounded-xl flex items-start border ${isSuccess ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700'}`;
+    titleEl.className = `text-md font-bold ${isSuccess ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}`;
+    errorContentDiv.className = `text-sm mt-2 ${isSuccess ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`;
     
     errorContentDiv.textContent = message;
-    errorMessageDiv.style.display = 'block';
+    errorMessageDiv.style.display = 'flex';
 }
 
 function hideError() {
@@ -171,14 +329,15 @@ function hideError() {
 function resetUIForNewTranslation() {
     if (progressContainer) progressContainer.style.display = 'block';
     if (progressBar) progressBar.style.width = '0%';
-    if (progressText) progressText.textContent = '0% Complete';
-    if (chunkStatusSpan) chunkStatusSpan.textContent = 'Initializing...';
-    if (timeEstimateSpan) timeEstimateSpan.textContent = 'Estimating...';
+    if (progressText) progressText.textContent = `0% ${i18n[currentLang].progressComplete}`;
+    if (chunkStatusSpan) chunkStatusSpan.textContent = '...';
+    if (timeEstimateSpan) timeEstimateSpan.textContent = i18n[currentLang].progressEstimating;
+    
     const downloadContainer = document.getElementById('download-container');
     if (downloadContainer) downloadContainer.style.display = 'none';
     hideError();
-    const retryContainer = document.getElementById('retry-container');
-    if (retryContainer) retryContainer.remove();
+    document.getElementById('retry-container')?.remove();
+    
     failedChunksData = [];
     currentAllTranslatedEntries = [];
 }
@@ -188,37 +347,28 @@ function updateProgress(chunkIndex, totalChunks, startTime) {
     const currentDisplayChunk = chunkIndex + 1;
     const progressPercentage = totalChunks > 0 ? Math.round((currentDisplayChunk / totalChunks) * 100) : 0;
     progressBar.style.width = `${progressPercentage}%`;
-    progressText.textContent = `${progressPercentage}% Complete`;
+    progressText.textContent = `${progressPercentage}% ${i18n[currentLang].progressComplete}`;
     chunkStatusSpan.textContent = `Processing chunk: ${currentDisplayChunk}/${totalChunks}`;
 
     if (chunkIndex === 0 && startTime && totalChunks > 1) {
-        timeEstimateSpan.textContent = 'Calculating...';
+        timeEstimateSpan.textContent = i18n[currentLang].progressCalculating;
     } else if (firstChunkTime > 0 && chunkIndex > 0 && totalChunks > 1) {
         const remainingChunks = totalChunks - currentDisplayChunk;
         if (remainingChunks >= 0) {
             const estimatedRemainingTime = remainingChunks * firstChunkTime;
             const minutes = Math.floor(estimatedRemainingTime / 60);
             const seconds = Math.floor(estimatedRemainingTime % 60);
-            timeEstimateSpan.textContent = `~${minutes}m ${seconds}s remaining`;
+            timeEstimateSpan.textContent = `~${minutes}m ${seconds}s ${i18n[currentLang].progressRemaining}`;
         }
     }
 }
 
-// --- TRANSLATION MEMORY, PARSING, AND API FUNCTIONS ---
-function updateTranslationMemory(sourceText, translatedText, lang) {
-    if (!sourceText || !translatedText || typeof sourceText !== 'string' || typeof translatedText !== 'string') return;
-    const trimmedSource = sourceText.trim();
-    const trimmedTranslated = translatedText.trim();
-    if (!trimmedSource || !trimmedTranslated) return;
-    if (!translationMemory[lang]) {
-        translationMemory[lang] = {};
-    }
-    translationMemory[lang][trimmedSource] = trimmedTranslated;
-    try {
-        localStorage.setItem('translationMemory', JSON.stringify(translationMemory));
-    } catch (e) {
-        console.error("Error saving translation memory:", e);
-        showError("Warning: Could not save to translation memory (storage might be full).");
+// --- PARSING, TRANSLATION, and CORE LOGIC ---
+function clearTranslationMemory() {
+    if (confirm(i18n[currentLang].clearMemoryConfirm)) {
+        translationMemory = {};
+        localStorage.removeItem('translationMemory');
+        alert(i18n[currentLang].clearMemorySuccess);
     }
 }
 
@@ -227,12 +377,16 @@ function findInTranslationMemory(text, lang) {
     return translationMemory[lang]?.[text.trim()];
 }
 
-function clearTranslationMemory() {
-    if (confirm('Are you sure you want to clear all saved translations from memory?')) {
-        translationMemory = {};
-        localStorage.removeItem('translationMemory');
-        alert('Translation memory cleared!');
-    }
+function updateTranslationMemory(sourceText, translatedText, lang) {
+    if (!sourceText || !translatedText) return;
+    const trimmedSource = sourceText.trim();
+    const trimmedTranslated = translatedText.trim();
+    if (!trimmedSource || !trimmedTranslated) return;
+    if (!translationMemory[lang]) translationMemory[lang] = {};
+    translationMemory[lang][trimmedSource] = trimmedTranslated;
+    try {
+        localStorage.setItem('translationMemory', JSON.stringify(translationMemory));
+    } catch (e) { console.error("Error saving to localStorage:", e); }
 }
 
 function parseSubtitle(content, format) {
@@ -241,103 +395,6 @@ function parseSubtitle(content, format) {
         case 'ssa': case 'ass': return parseSSA_ASS(content);
         case 'srt': default: return parseSRTInternal(content);
     }
-}
-
-function parseVTT(vttContent) {
-    const entries = [];
-    let currentEntry = null;
-    let lineBuffer = [];
-    let entryCount = 0;
-    const lines = vttContent.replace(/^\uFEFF/, '').replace(/\r\n|\r/g, '\n').split('\n');
-    
-    if (!lines[0].startsWith('WEBVTT')) {
-        console.warn("VTT file may be invalid: does not start with WEBVTT header.");
-    }
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const trimmedLine = line.trim();
-        const timeStampMatch = trimmedLine.match(/^(\d{2}:)?\d{2}:\d{2}[.,]\d{3}\s*-->\s*(\d{2}:)?\d{2}:\d{2}[.,]\d{3}/);
-
-        if (timeStampMatch) {
-            if (currentEntry) {
-                currentEntry.text = lineBuffer.join('\n');
-                entries.push(currentEntry);
-            }
-            entryCount++;
-            const prevLine = (i > 0) ? lines[i - 1].trim() : '';
-            const id = (prevLine && !prevLine.includes('-->') && prevLine !== '') ? prevLine : `auto_${entryCount}`;
-            currentEntry = { id: id, timeStamp: trimmedLine, text: null, otherData: { lineType: 'cue' } };
-            lineBuffer = [];
-        } else if (trimmedLine === '') {
-            if (currentEntry) {
-                currentEntry.text = lineBuffer.join('\n');
-                entries.push(currentEntry);
-                currentEntry = null;
-            }
-            entries.push({ id: null, timeStamp: null, text: null, otherData: { lineType: 'metadata', originalLine: line } });
-        } else if (currentEntry) {
-            lineBuffer.push(line);
-        } else {
-            entries.push({ id: null, timeStamp: null, text: null, otherData: { lineType: 'metadata', originalLine: line } });
-        }
-    }
-    if (currentEntry) {
-        currentEntry.text = lineBuffer.join('\n');
-        entries.push(currentEntry);
-    }
-    return entries;
-}
-
-function parseSSA_ASS(ssaContent) {
-    const entries = [];
-    let inEventsSection = false;
-    let formatFields = [];
-    let dialogueCount = 0;
-    const lines = ssaContent.replace(/^\uFEFF/, '').replace(/\r\n|\r/g, '\n').split('\n');
-    for (const line of lines) {
-        const trimmedLine = line.trim();
-        if (trimmedLine.startsWith('[')) {
-            inEventsSection = trimmedLine.toLowerCase() === '[events]';
-            entries.push({ otherData: { originalLine: line, lineType: 'section' } });
-            continue;
-        }
-        if (inEventsSection) {
-            if (trimmedLine.toLowerCase().startsWith('format:')) {
-                formatFields = trimmedLine.substring(7).split(',').map(f => f.trim().toLowerCase());
-                entries.push({ otherData: { originalLine: line, lineType: 'format' } });
-            } else if (trimmedLine.toLowerCase().startsWith('dialogue:')) {
-                dialogueCount++;
-                const parts = trimmedLine.substring(9).split(',');
-                const dialogueData = {};
-                let textIndex = -1;
-                for (let i = 0; i < formatFields.length; i++) {
-                    const fieldName = formatFields[i];
-                    if (fieldName === 'text') {
-                        textIndex = i;
-                        dialogueData[fieldName] = parts.slice(i).join(',');
-                        break;
-                    }
-                    dialogueData[fieldName] = parts[i] || '';
-                }
-                if (textIndex === -1) {
-                    entries.push({ otherData: { originalLine: line, lineType: 'malformed_dialogue' } });
-                    continue;
-                }
-                entries.push({
-                    id: `D${dialogueCount}`,
-                    timeStamp: `${dialogueData['start'] || '0:00:00.00'} --> ${dialogueData['end'] || '0:00:00.00'}`,
-                    text: dialogueData['text'] || '',
-                    otherData: { originalLine: line, lineType: 'dialogue', fields: dialogueData, formatOrder: formatFields }
-                });
-            } else {
-                entries.push({ otherData: { originalLine: line, lineType: 'other_event' } });
-            }
-        } else {
-            entries.push({ otherData: { originalLine: line, lineType: 'metadata' } });
-        }
-    }
-    return entries;
 }
 
 function parseSRTInternal(srtContent) {
@@ -353,6 +410,90 @@ function parseSRTInternal(srtContent) {
         const text = lines.slice(2).join('\n');
         if (id && timeStamp && timeStamp.includes('-->')) {
             entries.push({ id, timeStamp, text, otherData: { lineType: 'cue' } });
+        }
+    }
+    return entries;
+}
+
+function parseVTT(vttContent) {
+    const entries = [];
+    const lines = vttContent.replace(/^\uFEFF/, '').replace(/\r\n|\r/g, '\n').split('\n');
+    let currentEntry = null;
+    let lineBuffer = [];
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmedLine = line.trim();
+        const timeStampMatch = trimmedLine.match(/^(\d{2}:)?\d{2}:\d{2}[.,]\d{3}\s*-->\s*(\d{2}:)?\d{2}:\d{2}[.,]\d{3}/);
+        if (timeStampMatch) {
+            if (currentEntry) {
+                currentEntry.text = lineBuffer.join('\n');
+                entries.push(currentEntry);
+            }
+            const prevLine = (i > 0) ? lines[i-1].trim() : '';
+            const id = (prevLine && !prevLine.includes('-->') && prevLine !== '') ? prevLine : `auto_${i}`;
+            currentEntry = { id, timeStamp: trimmedLine, text: null, otherData: { lineType: 'cue' } };
+            lineBuffer = [];
+        } else if (trimmedLine === '') {
+            if (currentEntry) {
+                currentEntry.text = lineBuffer.join('\n');
+                entries.push(currentEntry);
+                currentEntry = null;
+            }
+            entries.push({ otherData: { lineType: 'metadata', originalLine: line } });
+        } else if (currentEntry) {
+            lineBuffer.push(line);
+        } else {
+             entries.push({ otherData: { lineType: 'metadata', originalLine: line } });
+        }
+    }
+    if (currentEntry) {
+        currentEntry.text = lineBuffer.join('\n');
+        entries.push(currentEntry);
+    }
+    return entries;
+}
+
+function parseSSA_ASS(ssaContent) {
+    const entries = [];
+    let inEventsSection = false;
+    let formatFields = [];
+    const lines = ssaContent.replace(/^\uFEFF/, '').replace(/\r\n|\r/g, '\n').split('\n');
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('[')) {
+            inEventsSection = trimmedLine.toLowerCase() === '[events]';
+            entries.push({ otherData: { originalLine: line, lineType: 'section' } });
+            continue;
+        }
+        if (inEventsSection) {
+            if (trimmedLine.toLowerCase().startsWith('format:')) {
+                formatFields = trimmedLine.substring(7).split(',').map(f => f.trim().toLowerCase());
+                entries.push({ otherData: { originalLine: line, lineType: 'format' } });
+            } else if (trimmedLine.toLowerCase().startsWith('dialogue:')) {
+                const parts = trimmedLine.substring(9).split(',');
+                const dialogueData = {};
+                let textIndex = -1;
+                for (let i = 0; i < formatFields.length; i++) {
+                    if (formatFields[i] === 'text') {
+                        textIndex = i;
+                        dialogueData['text'] = parts.slice(i).join(',');
+                        break;
+                    }
+                    dialogueData[formatFields[i]] = parts[i] || '';
+                }
+                if (textIndex !== -1) {
+                    entries.push({
+                        id: `D${entries.length}`,
+                        timeStamp: `${dialogueData['start']} --> ${dialogueData['end']}`,
+                        text: dialogueData['text'],
+                        otherData: { lineType: 'dialogue', originalLine: line, fields: dialogueData, formatOrder: formatFields }
+                    });
+                }
+            } else {
+                entries.push({ otherData: { originalLine: line, lineType: 'other_event' } });
+            }
+        } else {
+            entries.push({ otherData: { originalLine: line, lineType: 'metadata' } });
         }
     }
     return entries;
@@ -396,7 +537,7 @@ function splitIntoChunks(array, chunkCount) {
     return chunks;
 }
 
-async function translateChunk(chunk, apiKey, baseDelayMs, quotaDelayMs, lang, chunkIndex, totalChunks, model, promptTemplate, temperature, topP, topK, maxOutputTokens, stopSequencesStr) {
+async function translateChunk(chunk, apiKey, lang, model, temperature) {
     if (!chunk || chunk.length === 0) return [];
     
     const sourceTexts = chunk.map(entry => entry.text);
@@ -418,38 +559,28 @@ async function translateChunk(chunk, apiKey, baseDelayMs, quotaDelayMs, lang, ch
     const separator = "\n---\n";
     const indicesToTranslate = Array.from(textsToTranslateMap.keys());
     const combinedText = indicesToTranslate.map(index => textsToTranslateMap.get(index)).join(separator);
-    const effectivePrompt = `${promptTemplate}\n\nTranslate the following text into ${lang}. Respond ONLY with the translated text lines, separated by "${separator.trim()}", maintaining the original number of separated lines.\n\nInput Text:\n${combinedText}`;
+    const effectivePrompt = `Translate the following subtitle text into ${lang}. Maintain the original meaning, natural conversational tone, and appropriate length for subtitles. Respond ONLY with the translated text lines, separated by "---".\n\n${combinedText}`;
 
     const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    const useProxy = useProxyCheckbox.checked;
-    const targetUrl = useProxy ? proxyUrl : directUrl;
-    
-    const generationConfig = { temperature, topP, topK, maxOutputTokens };
-    const stopSequencesArray = stopSequencesStr.split(',').map(s => s.trim()).filter(Boolean);
-    if (stopSequencesArray.length > 0) generationConfig.stopSequences = stopSequencesArray;
+    const targetUrl = useProxyCheckbox.checked ? proxyUrl : directUrl;
     
     let finalPayload = {
         contents: [{ parts: [{ text: effectivePrompt }] }],
-        safetySettings: [
-            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-        ],
-        generationConfig: generationConfig
+        safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" }, { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }],
+        generationConfig: { temperature }
     };
-    if (useProxy) finalPayload.endpoint = directUrl;
+    if (useProxyCheckbox.checked) finalPayload.endpoint = directUrl;
 
     const fetchOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(finalPayload) };
     
     let attempts = 0;
     while (attempts < 4) {
         try {
-            if (attempts > 0) await new Promise(resolve => setTimeout(resolve, baseDelayMs * Math.pow(2, attempts -1)));
+            if (attempts > 0) await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempts - 1)));
             const response = await fetch(targetUrl, fetchOptions);
             if (!response.ok) {
                 if (response.status === 429) {
-                    await new Promise(resolve => setTimeout(resolve, quotaDelayMs));
+                    await new Promise(resolve => setTimeout(resolve, 60000));
                     continue;
                 }
                 throw new Error(`API error ${response.status}: ${await response.text()}`);
@@ -469,19 +600,18 @@ async function translateChunk(chunk, apiKey, baseDelayMs, quotaDelayMs, lang, ch
                 finalChunkTranslations[originalIndex] = translatedText.trim();
                 updateTranslationMemory(sourceTexts[originalIndex], translatedText.trim(), lang);
             });
-            await new Promise(resolve => setTimeout(resolve, baseDelayMs));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             return finalChunkTranslations;
 
         } catch (error) {
-            console.error(`Error in translateChunk ${chunkIndex} (Attempt ${attempts + 1}):`, error);
+            console.error(`Error in translateChunk (Attempt ${attempts + 1}):`, error);
             attempts++;
             if (attempts >= 4) throw error;
         }
     }
-    throw new Error(`Failed chunk ${chunkIndex} after multiple attempts.`);
+    throw new Error(`Failed chunk after multiple attempts.`);
 }
 
-// --- MAIN TRANSLATION ORCHESTRATION ---
 async function handleTranslate(event) {
     event.preventDefault();
     formContainer.style.display = 'none';
@@ -539,7 +669,7 @@ async function handleTranslate(event) {
             updateProgress(i, totalChunks, i === 0 ? startTime : null);
             try {
                 const chunkStartTime = performance.now();
-                const translatedTexts = await translateChunk(chunks[i], currentApiKey, 1000, 60000, currentLang, i + 1, totalChunks, currentModel, "Translate...", currentTemperature, 0.95, 40, 8192, "");
+                const translatedTexts = await translateChunk(chunks[i], currentApiKey, currentLang, currentModel, currentTemperature);
                 if (i === 0) firstChunkTime = (performance.now() - chunkStartTime) / 1000;
                 chunks[i].forEach((entry, idx) => translatedTextMap.set(entry, translatedTexts[idx] || entry.text));
             } catch (chunkError) {
@@ -550,10 +680,8 @@ async function handleTranslate(event) {
         }
         
         currentAllTranslatedEntries = allParsedEntries.map(entry => {
-            if (translatableEntries.includes(entry)) {
-                 return { ...entry, text: translatedTextMap.get(entry) || entry.text };
-            }
-            return entry;
+            const translatable = translatableEntries.find(t => t.id === entry.id && t.timeStamp === entry.timeStamp);
+            return translatable && translatedTextMap.has(translatable) ? { ...entry, text: translatedTextMap.get(translatable) } : entry;
         });
 
         generateAndDisplayDownloadLink();
@@ -563,7 +691,7 @@ async function handleTranslate(event) {
             showError(`Translation finished with ${failedChunksData.length} failed chunk(s).`);
             displayRetryButtons();
         } else {
-            showError('Translation successful!', 'success');
+            showError(i18n[currentLang].successTitle, 'success');
         }
 
     } catch (error) {
@@ -582,8 +710,8 @@ function generateAndDisplayDownloadLink() {
         const mimeType = getMimeType(currentOriginalFormat);
         const blob = new Blob([`\uFEFF${finalContent}`], { type: `${mimeType};charset=utf-8` });
         const url = URL.createObjectURL(blob);
-        const downloadFileName = `${currentOriginalFileName}_${currentLang}.${currentOriginalFormat}`;
-        downloadLinkContainer.innerHTML = `<a href="${url}" download="${downloadFileName}" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-colors"><i class="fas fa-download mr-2"></i>Download Translated File</a>`;
+        const downloadFileName = `${currentOriginalFileName}_${langInput.value}.${currentOriginalFormat}`;
+        downloadLinkContainer.innerHTML = `<a href="${url}" download="${downloadFileName}" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-colors"><i class="fas fa-download mr-2"></i>${i18n[currentLang].downloadFile}</a>`;
         downloadContainer.style.display = 'block';
     } catch (error) {
         showError("Could not generate the download file.");
@@ -599,14 +727,14 @@ function displayRetryButtons() {
         retryContainer.className = 'mt-6 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 rounded-lg';
         resultsArea.appendChild(retryContainer);
     }
-    retryContainer.innerHTML = `<p class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3">Retry Failed Chunks:</p>`;
+    retryContainer.innerHTML = `<p class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3">${i18n[currentLang].retryFailed}</p>`;
     const buttonsContainer = document.createElement('div');
     buttonsContainer.className = 'flex flex-wrap gap-2';
     failedChunksData.sort((a,b)=>a.index-b.index).forEach(failedChunk => {
         const button = document.createElement('button');
         button.className = 'px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-md';
         button.dataset.chunkIndex = failedChunk.index;
-        button.textContent = `Retry Chunk ${failedChunk.index + 1}`;
+        button.textContent = `${i18n[currentLang].retryButton} ${failedChunk.index + 1}`;
         button.addEventListener('click', handleManualRetry);
         buttonsContainer.appendChild(button);
     });
@@ -616,40 +744,37 @@ function displayRetryButtons() {
 async function handleManualRetry(event) {
     const button = event.target;
     button.disabled = true;
-    button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Retrying...`;
+    button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${i18n[currentLang].retryingButton}`;
     
     const internalChunkIndex = parseInt(button.dataset.chunkIndex, 10);
     const failedChunkInfo = failedChunksData.find(fc => fc.index === internalChunkIndex);
-    if (!failedChunkInfo) {
-        showError("Error: Could not find data for this chunk retry.");
-        button.remove(); return;
-    }
+    if (!failedChunkInfo) return;
     
     try {
-        const translatedTexts = await translateChunk(failedChunkInfo.chunkData, currentApiKey, 1000, 60000, currentLang, internalChunkIndex + 1, 1, currentModel, "Translate...", currentTemperature, 0.95, 40, 8192, "");
+        const translatedTexts = await translateChunk(failedChunkInfo.chunkData, currentApiKey, currentLang, currentModel, currentTemperature);
         const retriedMap = new Map();
         failedChunkInfo.chunkData.forEach((entry, idx) => retriedMap.set(entry, translatedTexts[idx] || entry.text));
         
-        currentAllTranslatedEntries = currentAllTranslatedEntries.map(entry => retriedMap.has(entry) ? { ...entry, text: retriedMap.get(entry) } : entry);
+        currentAllTranslatedEntries = currentAllTranslatedEntries.map(entry => {
+             const translatable = failedChunkInfo.chunkData.find(t => t.id === entry.id && t.timeStamp === entry.timeStamp);
+             return translatable && retriedMap.has(translatable) ? { ...entry, text: retriedMap.get(translatable) } : entry;
+        });
 
         failedChunksData = failedChunksData.filter(fc => fc.index !== internalChunkIndex);
         showError(`Chunk ${internalChunkIndex + 1} successfully translated!`, 'success');
         button.remove();
         generateAndDisplayDownloadLink();
-        if (failedChunksData.length === 0) {
-             const existingRetryContainer = document.getElementById('retry-container');
-             if(existingRetryContainer) existingRetryContainer.remove();
-        }
+        if (failedChunksData.length === 0) document.getElementById('retry-container')?.remove();
     } catch (retryError) {
         showError(`Retry failed for Chunk ${internalChunkIndex + 1}: ${retryError.message}`);
         button.disabled = false;
-        button.textContent = `Retry Chunk ${internalChunkIndex + 1}`;
+        button.textContent = `${i18n[currentLang].retryButton} ${internalChunkIndex + 1}`;
     }
 }
 
 // --- EVENT LISTENERS INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Get All DOM References ---
+    // Populate DOM references
     htmlElement = document.documentElement;
     themeToggle = document.getElementById('themeToggle');
     languageToggle = document.getElementById('languageToggle');
@@ -664,8 +789,6 @@ document.addEventListener('DOMContentLoaded', () => {
     langInput = document.getElementById('lang-input');
     modelSelect = document.getElementById('model');
     temperatureInput = document.getElementById('temperature');
-    pageTitle = document.getElementById('page-title');
-    uploadInstructions = document.getElementById('upload-instructions');
     progressContainer = document.getElementById('progress-container');
     progressBar = document.getElementById('progress');
     progressText = document.getElementById('progress-text');
@@ -673,8 +796,8 @@ document.addEventListener('DOMContentLoaded', () => {
     timeEstimateSpan = document.getElementById('time-estimate');
     downloadLinkContainer = document.getElementById('download-link');
     errorMessageDiv = document.getElementById('error-message');
-    errorContentDiv = document.getElementById('error-content');
-    
+    errorContentDiv = errorMessageDiv.querySelector('.text-sm');
+    submitButton = document.getElementById('submit-button');
     formContainer = document.getElementById('form-container');
     resultsArea = document.getElementById('results-area');
     stepSections = document.querySelectorAll('[data-step]');
@@ -692,13 +815,15 @@ document.addEventListener('DOMContentLoaded', () => {
     fileNameSpan = document.getElementById('file-name');
     removeFileBtn = document.getElementById('remove-file');
 
-    updateTheme(localStorage.getItem('theme') !== 'dark');
-    updateLanguage(localStorage.getItem('language') || 'English');
+    // Initial Page Setup
+    updateTheme(localStorage.getItem('theme') === 'light'); // Default to dark
+    updateLanguage(localStorage.getItem('language') === 'fa' ? 'fa' : 'en');
     loadApiKey();
     goToStep(1);
 
+    // Attach Event Listeners
     themeToggle.addEventListener('click', () => updateTheme(!htmlElement.classList.contains('dark')));
-    languageToggle.addEventListener('click', () => updateLanguage(localStorage.getItem('language') === 'Persian' ? 'English' : 'Persian'));
+    languageToggle.addEventListener('click', () => updateLanguage(currentLang === 'en' ? 'fa' : 'en'));
     clearMemoryButton.addEventListener('click', clearTranslationMemory);
     togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
     rememberMeCheckbox.addEventListener('change', saveApiKey);
@@ -729,10 +854,11 @@ document.addEventListener('DOMContentLoaded', () => {
     translateForm.addEventListener('submit', handleTranslate);
     startNewTranslationBtn.addEventListener('click', resetWizard);
 
+    // Dropzone Configuration
     Dropzone.autoDiscover = false;
     if (dropzoneElement) {
-        myDropzone = new Dropzone(dropzoneElement, {
-            url: "#", autoProcessQueue: false, acceptedFiles: ".srt,.vtt,.ssa,.ass", maxFiles: 1,
+        myDropzone = new Dropzone(dropzoneElement.parentElement, { // Attach to container for better click handling
+            url: "#", autoProcessQueue: false, acceptedFiles: ".srt,.vtt,.ssa,.ass", maxFiles: 1, clickable: '#dropzone-upload',
             init: function() {
                 this.on("addedfile", file => {
                     if (this.files.length > 1) this.removeFile(this.files[0]);

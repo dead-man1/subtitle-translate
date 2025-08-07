@@ -115,7 +115,7 @@ const i18n = {
 };
 
 // --- Global Variables & State ---
-let uiLang = 'en'; // *** FIX: Renamed variable for UI language ONLY ***
+let uiLang = 'en';
 let uploadedFile = null;
 let translationMemory = JSON.parse(localStorage.getItem('translationMemory') || '{}');
 let currentStep = 1;
@@ -142,9 +142,9 @@ let myDropzone;
 // --- UI & WIZARD MANAGEMENT ---
 
 function updateLanguage(lang) {
-    uiLang = lang; // Use the renamed global variable
+    uiLang = lang;
     const isRTL = lang === 'fa';
-    const translations = i18n[uiLang]; // Use the renamed global variable
+    const translations = i18n[uiLang];
     
     document.documentElement.lang = lang;
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
@@ -217,16 +217,16 @@ function goToStep(stepNumber) {
     stepIndicators.forEach((indicator, index) => {
         const step = index + 1;
         const textSpans = indicator.querySelectorAll('span');
-        indicator.className = 'group flex flex-col py-2 pl-4 md:border-l-0 md:border-t-4 md:pl-0 md:pt-4 md:pb-0'; // Reset classes
-        textSpans.forEach(span => span.className = 'text-sm font-medium'); // Reset text classes
+        indicator.className = 'group flex flex-col py-2 pl-4 md:border-l-0 md:border-t-4 md:pl-0 md:pt-4 md:pb-0';
+        textSpans.forEach(span => span.className = 'text-sm font-medium');
 
-        if (step < stepNumber) { // Completed
+        if (step < stepNumber) {
             indicator.classList.add('border-l-4', 'md:border-t-4', 'border-green-500');
             textSpans.forEach(span => span.classList.add('text-green-600', 'dark:text-green-400'));
-        } else if (step === stepNumber) { // Active
+        } else if (step === stepNumber) {
             indicator.classList.add('border-l-4', 'md:border-t-4', 'border-primary-600');
             textSpans.forEach(span => span.classList.add('text-primary-600'));
-        } else { // Future
+        } else {
             indicator.classList.add('border-l-4', 'md:border-t-4', 'border-gray-200', 'dark:border-gray-700');
             textSpans.forEach(span => span.classList.add('text-gray-500', 'dark:text-gray-400'));
         }
@@ -268,7 +268,6 @@ function togglePasswordVisibility() {
 }
 
 function saveApiKey() {
-    if (!rememberMeCheckbox || !apiKeyInput) return;
     if (rememberMeCheckbox.checked && apiKeyInput.value) {
         localStorage.setItem('savedApiKey', apiKeyInput.value);
     } else {
@@ -277,7 +276,6 @@ function saveApiKey() {
 }
 
 function loadApiKey() {
-    if (!apiKeyInput || !rememberMeCheckbox) return;
     const savedApiKey = localStorage.getItem('savedApiKey');
     if (savedApiKey) {
         apiKeyInput.value = savedApiKey;
@@ -296,7 +294,6 @@ function showError(message, type = 'error') {
     }
     
     const isSuccess = type === 'success';
-    // *** FIX: This now safely uses the UI language variable 'uiLang' ***
     titleEl.textContent = isSuccess ? i18n[uiLang].successTitle : i18n[uiLang].errorTitle;
     iconEl.className = `fas text-xl mr-3 ${isSuccess ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'}`;
     errorMessageDiv.className = `mt-6 p-4 rounded-xl flex items-start border ${isSuccess ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700'}`;
@@ -318,8 +315,7 @@ function resetUIForNewTranslation() {
     if (chunkStatusSpan) chunkStatusSpan.textContent = '...';
     if (timeEstimateSpan) timeEstimateSpan.textContent = i18n[uiLang].progressEstimating;
     
-    const downloadContainer = document.getElementById('download-container');
-    if (downloadContainer) downloadContainer.style.display = 'none';
+    document.getElementById('download-container')?.remove();
     hideError();
     document.getElementById('retry-container')?.remove();
     
@@ -358,15 +354,14 @@ function clearTranslationMemory() {
 }
 
 function findInTranslationMemory(text, lang) {
-    if (!text || typeof text !== 'string') return undefined;
     return translationMemory[lang]?.[text.trim()];
 }
 
 function updateTranslationMemory(sourceText, translatedText, lang) {
     if (!sourceText || !translatedText) return;
     const trimmedSource = sourceText.trim();
+    if (!trimmedSource) return;
     const trimmedTranslated = translatedText.trim();
-    if (!trimmedSource || !trimmedTranslated) return;
     if (!translationMemory[lang]) translationMemory[lang] = {};
     translationMemory[lang][trimmedSource] = trimmedTranslated;
     try {
@@ -384,20 +379,17 @@ function parseSubtitle(content, format) {
 
 function parseSRTInternal(srtContent) {
     const blocks = srtContent.replace(/^\uFEFF/, '').replace(/\r\n|\r/g, '\n').split(/\n\s*\n/);
-    const entries = [];
-    for (const block of blocks) {
-        const trimmed = block.trim();
-        if (!trimmed) continue;
-        const lines = trimmed.split('\n');
-        if (lines.length < 2) continue;
+    return blocks.map(block => {
+        const lines = block.trim().split('\n');
+        if (lines.length < 2) return null;
         const id = lines[0];
         const timeStamp = lines[1];
         const text = lines.slice(2).join('\n');
         if (id && timeStamp && timeStamp.includes('-->')) {
-            entries.push({ id, timeStamp, text, otherData: { lineType: 'cue' } });
+            return { id, timeStamp, text, otherData: { lineType: 'cue' } };
         }
-    }
-    return entries;
+        return null;
+    }).filter(Boolean);
 }
 
 function parseVTT(vttContent) {
@@ -492,8 +484,7 @@ function reconstructSubtitle(entries, format) {
         case 'ass':
             return entries.map(e => {
                 if (e.otherData.lineType === 'dialogue') {
-                    const fields = e.otherData.fields;
-                    fields['text'] = e.text;
+                    const fields = { ...e.otherData.fields, text: e.text };
                     const reconstructedParts = e.otherData.formatOrder.map(fieldName => fields[fieldName] || '');
                     return `Dialogue: ${reconstructedParts.join(',')}`;
                 }
@@ -522,28 +513,50 @@ function splitIntoChunks(array, chunkCount) {
     return chunks;
 }
 
-async function translateChunk(chunk, apiKey, targetLang, model, temperature) {
-    if (!chunk || chunk.length === 0) return [];
-    
-    const sourceTexts = chunk.map(entry => entry.text);
-    const cachedTranslations = sourceTexts.map(text => findInTranslationMemory(text, targetLang));
-    const textsToTranslateMap = new Map();
-    sourceTexts.forEach((text, index) => {
-        if (cachedTranslations[index] === undefined && text?.trim()) {
-            textsToTranslateMap.set(index, text);
-        } else {
-            cachedTranslations[index] = cachedTranslations[index] || '';
-        }
-    });
 
-    if (textsToTranslateMap.size === 0) {
-        await new Promise(resolve => setTimeout(resolve, 50));
-        return cachedTranslations;
+async function translateChunkRecursively(chunk, apiKey, targetLang, model, temperature) {
+    // Base case: If the chunk is empty or has only one line, try to translate it directly.
+    // If it fails, we can't split it further, so we return the original text.
+    if (chunk.length <= 1) {
+        try {
+            return await fetchTranslation(chunk, apiKey, targetLang, model, temperature);
+        } catch (e) {
+            console.error(`Final attempt failed for chunk of size 1. Returning original text. Error:`, e.message);
+            return chunk.map(entry => entry.text); // Return original text on final failure
+        }
     }
 
+    try {
+        // Attempt to translate the whole chunk first.
+        return await fetchTranslation(chunk, apiKey, targetLang, model, temperature);
+    } catch (error) {
+        // If it's a line count mismatch, divide and conquer.
+        if (error.message.includes('Line count mismatch')) {
+            console.warn(`Line count mismatch for chunk of size ${chunk.length}. Splitting in half.`);
+            const midPoint = Math.ceil(chunk.length / 2);
+            const firstHalf = chunk.slice(0, midPoint);
+            const secondHalf = chunk.slice(midPoint);
+
+            // Recursively call the function on both halves and wait for them to complete.
+            const translatedFirstHalf = await translateChunkRecursively(firstHalf, apiKey, targetLang, model, temperature);
+            const translatedSecondHalf = await translateChunkRecursively(secondHalf, apiKey, targetLang, model, temperature);
+
+            // Combine the results.
+            return [...translatedFirstHalf, ...translatedSecondHalf];
+        } else {
+            // For any other error (e.g., API key error, server error), throw it up to be handled.
+            console.error("A non-recoverable error occurred during translation:", error);
+            throw error;
+        }
+    }
+}
+
+async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
+    if (!chunk || chunk.length === 0) return [];
+
     const separator = "\n---\n";
-    const indicesToTranslate = Array.from(textsToTranslateMap.keys());
-    const combinedText = indicesToTranslate.map(index => textsToTranslateMap.get(index)).join(separator);
+    const sourceTexts = chunk.map(entry => entry.text);
+    const combinedText = sourceTexts.join(separator);
     const effectivePrompt = `Translate the following subtitle text into ${targetLang}. Maintain the original meaning, natural conversational tone, and appropriate length for subtitles. Respond ONLY with the translated text lines, separated by "---".\n\n${combinedText}`;
 
     const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
@@ -558,43 +571,68 @@ async function translateChunk(chunk, apiKey, targetLang, model, temperature) {
 
     const fetchOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(finalPayload) };
     
-    let attempts = 0;
-    while (attempts < 4) {
-        try {
-            if (attempts > 0) await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempts - 1)));
-            const response = await fetch(targetUrl, fetchOptions);
-            if (!response.ok) {
-                if (response.status === 429) {
-                    await new Promise(resolve => setTimeout(resolve, 60000));
-                    continue;
-                }
-                throw new Error(`API error ${response.status}: ${await response.text()}`);
-            }
-            const data = await response.json();
-            const responseText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (responseText === undefined) throw new Error('Invalid API response structure.');
-            
-            const translatedLines = responseText.trim().split(separator.trim());
-            if (responseText.trim() !== "" && translatedLines.length !== textsToTranslateMap.size) {
-                 throw new Error(`Line count mismatch. Expected ${textsToTranslateMap.size}, got ${translatedLines.length}`);
-            }
-            
-            const finalChunkTranslations = [...cachedTranslations];
-            translatedLines.forEach((translatedText, i) => {
-                const originalIndex = indicesToTranslate[i];
-                finalChunkTranslations[originalIndex] = translatedText.trim();
-                updateTranslationMemory(sourceTexts[originalIndex], translatedText.trim(), targetLang);
-            });
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            return finalChunkTranslations;
+    const response = await fetch(targetUrl, fetchOptions);
+    if (!response.ok) {
+        throw new Error(`API error ${response.status}: ${await response.text()}`);
+    }
+    const data = await response.json();
+    const responseText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (responseText === undefined) throw new Error('Invalid API response structure.');
+    
+    const translatedLines = responseText.trim().split(separator.trim());
+    if (responseText.trim() !== "" && translatedLines.length !== chunk.length) {
+         throw new Error(`Line count mismatch. Expected ${chunk.length}, got ${translatedLines.length}`);
+    }
+    
+    return translatedLines.map(line => line.trim());
+}
 
-        } catch (error) {
-            console.error(`Error in translateChunk (Attempt ${attempts + 1}):`, error);
-            attempts++;
-            if (attempts >= 4) throw error;
+async function translateChunk(chunk, apiKey, targetLang, model, temperature) {
+    const textsToTranslate = [];
+    const cachedResults = new Map();
+
+    // First, check the cache for all entries in the chunk
+    chunk.forEach((entry, index) => {
+        const cached = findInTranslationMemory(entry.text, targetLang);
+        if (cached) {
+            cachedResults.set(index, cached);
+        } else {
+            textsToTranslate.push({ originalIndex: index, ...entry });
+        }
+    });
+
+    // If everything was in the cache, we're done with this chunk
+    if (textsToTranslate.length === 0) {
+        const finalTranslations = [];
+        for (let i = 0; i < chunk.length; i++) {
+            finalTranslations[i] = cachedResults.get(i);
+        }
+        return finalTranslations;
+    }
+
+    // Translate the remaining entries using the robust recursive method
+    const translatedTexts = await translateChunkRecursively(textsToTranslate, apiKey, targetLang, model, temperature);
+
+    // Update the memory with the new translations
+    translatedTexts.forEach((translatedText, i) => {
+        const originalEntry = textsToTranslate[i];
+        updateTranslationMemory(originalEntry.text, translatedText, targetLang);
+    });
+
+    // Merge cached results with new translations
+    const finalTranslations = [];
+    let translatedIndex = 0;
+    for (let i = 0; i < chunk.length; i++) {
+        if (cachedResults.has(i)) {
+            finalTranslations[i] = cachedResults.get(i);
+        } else {
+            finalTranslations[i] = translatedTexts[translatedIndex] || chunk[i].text; // Fallback to original if something went wrong
+            translatedIndex++;
         }
     }
-    throw new Error(`Failed chunk after multiple attempts.`);
+    
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Rate limit delay
+    return finalTranslations;
 }
 
 async function handleTranslate(event) {
@@ -603,9 +641,8 @@ async function handleTranslate(event) {
     resultsArea.style.display = 'block';
     resetUIForNewTranslation();
 
-    const targetLanguage = langInput.value.trim(); // Use a local variable for the translation language
+    const targetLanguage = langInput.value.trim();
 
-    // Store settings needed for potential retries in global scope
     currentApiKey = apiKeyInput.value.trim();
     currentModel = modelSelect.value;
     currentTemperature = parseFloat(temperatureInput.value);
@@ -615,18 +652,12 @@ async function handleTranslate(event) {
     const inputMethod = selectFileInputBtn.classList.contains('bg-primary-600') ? 'file' : 'text';
 
     if (inputMethod === 'file') {
-        if (!uploadedFile) {
-            showError('Please select a subtitle file.');
-            resetWizard(); return;
-        }
+        if (!uploadedFile) { showError('Please select a subtitle file.'); resetWizard(); return; }
         currentOriginalFormat = uploadedFile.name.split('.').pop()?.toLowerCase() || 'srt';
         currentOriginalFileName = uploadedFile.name.replace(/\.[^/.]+$/, "");
         subtitleContent = await uploadedFile.text();
     } else {
-        if (srtTextInput.value.trim() === '') {
-            showError('Please paste SRT content.');
-            resetWizard(); return;
-        }
+        if (srtTextInput.value.trim() === '') { showError('Please paste SRT content.'); resetWizard(); return; }
         currentOriginalFormat = 'srt';
         currentOriginalFileName = 'pasted_translation';
         subtitleContent = srtTextInput.value;
@@ -691,16 +722,34 @@ async function handleTranslate(event) {
 }
 
 function generateAndDisplayDownloadLink(targetLang) {
-    const downloadContainer = document.getElementById('download-container');
-    if (!downloadContainer || !currentAllTranslatedEntries) return;
+    document.getElementById('download-container')?.remove(); // Remove old one if it exists
+    const downloadContainer = document.createElement('div');
+    downloadContainer.id = 'download-container';
+    downloadContainer.className = "mt-6 p-6 rounded-xl bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700";
+    
     try {
         const finalContent = reconstructSubtitle(currentAllTranslatedEntries, currentOriginalFormat);
         const mimeType = getMimeType(currentOriginalFormat);
         const blob = new Blob([`\uFEFF${finalContent}`], { type: `${mimeType};charset=utf-8` });
         const url = URL.createObjectURL(blob);
         const downloadFileName = `${currentOriginalFileName}_${targetLang}.${currentOriginalFormat}`;
-        downloadContainer.innerHTML = `<a href="${url}" download="${downloadFileName}" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-colors"><i class="fas fa-download mr-2"></i>${i18n[uiLang].downloadFile}</a>`;
-        downloadContainer.style.display = 'block';
+        
+        downloadContainer.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-3xl text-green-500 mr-4"></i>
+                <div>
+                    <h3 class="text-xl font-bold text-green-800 dark:text-green-200">${i18n[uiLang].successTitle}</h3>
+                    <p class="text-green-700 dark:text-green-300 mt-1">${i18n[uiLang].successText}</p>
+                    <div class="mt-4">
+                        <a href="${url}" download="${downloadFileName}" class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-md transition-colors">
+                            <i class="fas fa-download mr-2"></i>
+                            ${i18n[uiLang].downloadFile}
+                        </a>
+                    </div>
+                </div>
+            </div>`;
+
+        resultsArea.insertBefore(downloadContainer, resultsArea.firstChild);
     } catch (error) {
         showError("Could not generate the download file.");
     }
@@ -781,7 +830,6 @@ document.addEventListener('DOMContentLoaded', () => {
     progressText = document.getElementById('progress-text');
     chunkStatusSpan = document.getElementById('chunk-status');
     timeEstimateSpan = document.getElementById('time-estimate');
-    downloadLinkContainer = document.getElementById('download-link');
     errorMessageDiv = document.getElementById('error-message');
     errorContentDiv = errorMessageDiv.querySelector('.text-sm');
     submitButton = document.getElementById('submit-button');

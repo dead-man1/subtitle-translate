@@ -113,7 +113,6 @@
             transform: rotate(180deg);
         }
 
-        /* Step Wizard Styles */
         [data-step] {
             display: none;
         }
@@ -121,10 +120,6 @@
         [data-step].active {
             display: block;
             animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .step-line {
-            transition: background-color 0.4s ease-in-out;
         }
     </style>
 </head>
@@ -158,7 +153,8 @@
                             <h1 id="page-title"
                                 class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
                                 Subtitle Translator</h1>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">AI-Powered Translation</p>
+                            <p id="page-subtitle" class="text-xs text-gray-500 dark:text-gray-400">AI-Powered
+                                Translation</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
@@ -211,7 +207,6 @@
                     </ol>
                 </nav>
 
-
                 <!-- Main Form -->
                 <form id="translate-form" class="space-y-6">
                     <!-- Step 1: API Key -->
@@ -220,44 +215,34 @@
                         <h3 class="text-xl font-bold mb-4 flex items-center"><i
                                 class="fas fa-key mr-3 text-primary-600"></i>Step 1: Configure Your API Key</h3>
                         <div class="space-y-4">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
-                                This tool uses the Gemini API. Please provide your API key to proceed. Your key is
-                                stored locally in your browser and is never sent to our servers.
-                            </p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">This tool uses the Gemini API. Please
+                                provide your API key to proceed. Your key is stored locally in your browser and is never
+                                sent to our servers.</p>
                             <div>
                                 <label for="api_key"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Gemini API
                                     Key</label>
-                                <div class="relative">
-                                    <input type="password" id="api_key" name="api_key"
+                                <div class="relative"><input type="password" id="api_key" name="api_key"
                                         class="w-full pl-4 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700"
-                                        placeholder="Enter your Gemini API key" required>
-                                    <button type="button"
+                                        placeholder="Enter your Gemini API key" required><button type="button"
                                         class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-700"
                                         id="togglePasswordBtn" aria-label="Toggle API key visibility"><i
-                                            class="fas fa-eye"></i></button>
-                                </div>
+                                            class="fas fa-eye"></i></button></div>
                             </div>
-                            <div class="flex items-center">
-                                <input type="checkbox" id="remember_me" name="remember_me"
-                                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-                                <label for="remember_me" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Remember
-                                    my key</label>
-                            </div>
+                            <div class="flex items-center"><input type="checkbox" id="remember_me" name="remember_me"
+                                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"><label
+                                    for="remember_me" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Remember my
+                                    key</label></div>
                             <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                                <p class="text-sm text-blue-800 dark:text-blue-200">
-                                    <i class="fas fa-info-circle mr-1"></i>
-                                    Get your free key from <a href='https://aistudio.google.com/app/apikey'
-                                        target='_blank' class="font-medium underline hover:text-blue-600">Google AI
-                                        Studio</a>.
-                                </p>
+                                <p class="text-sm text-blue-800 dark:text-blue-200"><i
+                                        class="fas fa-info-circle mr-1"></i> Get your free key from <a
+                                        href='https://aistudio.google.com/app/apikey' target='_blank'
+                                        class="font-medium underline hover:text-blue-600">Google AI Studio</a>.</p>
                             </div>
                         </div>
-                        <div class="mt-8 text-right">
-                            <button type="button" id="next-to-step-2"
-                                class="px-6 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed">
-                                Next <i class="fas fa-arrow-right ml-2"></i>
-                            </button>
+                        <div class="mt-8 text-right"><button type="button" id="next-to-step-2"
+                                class="px-6 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"><span
+                                    class="next-btn-text">Next</span> <i class="fas fa-arrow-right ml-2"></i></button>
                         </div>
                     </section>
 
@@ -267,16 +252,13 @@
                         <h3 class="text-xl font-bold mb-4 flex items-center"><i
                                 class="fas fa-upload mr-3 text-primary-600"></i>Step 2: Add Your Subtitle Content</h3>
                         <div class="flex justify-center mb-6">
-                            <div class="inline-flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1 space-x-1">
-                                <button type="button" id="select-file-input"
+                            <div class="inline-flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1 space-x-1"><button
+                                    type="button" id="select-file-input"
                                     class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md shadow">File
-                                    Upload</button>
-                                <button type="button" id="select-text-input"
+                                    Upload</button><button type="button" id="select-text-input"
                                     class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md">Paste
-                                    Text</button>
-                            </div>
+                                    Text</button></div>
                         </div>
-
                         <div id="file-input-container">
                             <div id="dropzone-upload"
                                 class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-primary-400 transition-colors cursor-pointer bg-gray-50 dark:bg-gray-700/50">
@@ -289,31 +271,27 @@
                             </div>
                             <div id="file-feedback" class="mt-4 text-center" style="display: none;">
                                 <p class="text-green-600 dark:text-green-400 font-medium"><i
-                                        class="fas fa-check-circle mr-2"></i>File selected: <span id="file-name"
-                                        class="font-bold"></span></p>
+                                        class="fas fa-check-circle mr-2"></i><span>File selected: </span><span
+                                        id="file-name" class="font-bold"></span></p>
                                 <button type="button" id="remove-file"
                                     class="text-sm text-red-500 hover:underline ml-4"><i
-                                        class="fas fa-times-circle mr-1"></i>Remove</button>
+                                        class="fas fa-times-circle mr-1"></i><span>Remove</span></button>
                             </div>
                         </div>
-
-                        <div id="text-input-container" style="display: none;">
-                            <textarea id="srt_text" name="srt_text" rows="8"
+                        <div id="text-input-container" style="display: none;"><textarea id="srt_text" name="srt_text"
+                                rows="8"
                                 class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-primary-500"
                                 placeholder="Paste your SRT content here..."></textarea>
                             <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Note: Only SRT format is supported
                                 for text input.</p>
                         </div>
-
                         <div class="mt-8 flex justify-between items-center">
                             <button type="button" id="back-to-step-1"
-                                class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 transition-all">
-                                <i class="fas fa-arrow-left mr-2"></i> Back
-                            </button>
+                                class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 transition-all"><i
+                                    class="fas fa-arrow-left mr-2"></i> <span class="back-btn-text">Back</span></button>
                             <button type="button" id="next-to-step-3"
-                                class="px-6 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed">
-                                Next <i class="fas fa-arrow-right ml-2"></i>
-                            </button>
+                                class="px-6 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"><span
+                                    class="next-btn-text">Next</span> <i class="fas fa-arrow-right ml-2"></i></button>
                         </div>
                     </section>
 
@@ -322,30 +300,25 @@
                         class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8 card-hover">
                         <h3 class="text-xl font-bold mb-6 flex items-center"><i
                                 class="fas fa-cogs mr-3 text-primary-600"></i>Step 3: Finalize and Translate</h3>
-
                         <div class="space-y-6">
-                            <div>
-                                <label for="lang-input"
+                            <div><label for="lang-input"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target
-                                    Language</label>
-                                <input type="text" id="lang-input" name="lang" value="Persian (Farsi)"
+                                    Language</label><input type="text" id="lang-input" name="lang"
+                                    value="Persian (Farsi)"
                                     class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-primary-500"
-                                    placeholder="e.g., Spanish, French, Japanese" required>
-                            </div>
-
+                                    placeholder="e.g., Spanish, French, Japanese" required></div>
                             <details class="bg-gray-50 dark:bg-gray-900/50 rounded-lg border dark:border-gray-700">
                                 <summary class="p-4 cursor-pointer flex justify-between items-center">
                                     <h4 class="text-md font-semibold flex items-center"><i
-                                            class="fas fa-tools mr-2 text-gray-500"></i>Advanced Settings</h4>
-                                    <i class="fas fa-chevron-down text-gray-500 details-arrow"></i>
+                                            class="fas fa-tools mr-2 text-gray-500"></i>Advanced Settings</h4><i
+                                        class="fas fa-chevron-down text-gray-500 details-arrow"></i>
                                 </summary>
                                 <div class="px-4 pb-4 border-t dark:border-gray-700">
-                                    <!-- This is where the original Advanced Settings HTML goes. It has been copied here directly. -->
                                     <div class="pt-4 space-y-6">
                                         <div
                                             class="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
-                                            <div class="flex items-start">
-                                                <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 mr-2"></i>
+                                            <div class="flex items-start"><i
+                                                    class="fas fa-exclamation-triangle text-amber-500 mt-0.5 mr-2"></i>
                                                 <p class="text-sm text-amber-800 dark:text-amber-200">Adjusting these
                                                     settings can affect performance, cost, and quality. Proceed with
                                                     caution.</p>
@@ -358,14 +331,8 @@
                                                     Model</label>
                                                 <select id="model" name="model"
                                                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
-                                                    <option value="gemini-2.5-flash-preview-04-17">Gemini 2.5 Flash
-                                                    </option>
-                                                    <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash</option>
-                                                    <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
-                                                    <option value="gemini-2.5-pro-preview-03-25">Gemini 2.5 Pro</option>
-                                                    <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                                                    <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash-8B</option>
-                                                    <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                                                    <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash</option>
+                                                    <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro</option>
                                                 </select>
                                             </div>
                                             <div>
@@ -377,34 +344,58 @@
                                                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
                                             </div>
                                         </div>
+
+                                        <!-- *** THIS IS THE NEW PART *** -->
                                         <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                                            <div class="flex items-center">
-                                                <input type="checkbox" id="useProxyCheckbox" name="useProxyCheckbox"
-                                                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-                                                <label for="useProxyCheckbox"
-                                                    class="ml-2 text-sm text-gray-700 dark:text-gray-300">Use Proxy (For
-                                                    users in sanctioned regions)</label>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div>
+                                                    <label for="prompt-preset-select"
+                                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                                        data-i18n="promptPresetLabel">Translation Preset</label>
+                                                    <select id="prompt-preset-select"
+                                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100">
+                                                        <option value="default" data-i18n="presetDefault">Default
+                                                            (Recommended)</option>
+                                                        <option value="formal" data-i18n="presetFormal">Formal /
+                                                            Technical</option>
+                                                        <option value="casual" data-i18n="presetCasual">Casual /
+                                                            Colloquial</option>
+                                                        <option value="custom" data-i18n="presetCustom">Custom</option>
+                                                    </select>
+                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                                        data-i18n="promptPresetNote">Select a style or choose 'Custom'
+                                                        to write your own.</p>
+                                                </div>
                                             </div>
+                                            <div class="mt-6">
+                                                <label for="translation_prompt"
+                                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                                    data-i18n="systemPromptLabel">System Prompt</label>
+                                                <textarea id="translation_prompt" name="translation_prompt" rows="5"
+                                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100 read-only:bg-gray-100 dark:read-only:bg-gray-800 transition-colors"></textarea>
+                                            </div>
+                                        </div>
+                                        <!-- *** END OF NEW PART *** -->
+
+                                        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                                            <div class="flex items-center"><input type="checkbox" id="useProxyCheckbox"
+                                                    name="useProxyCheckbox"
+                                                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"><label
+                                                    for="useProxyCheckbox"
+                                                    class="ml-2 text-sm text-gray-700 dark:text-gray-300">Use Proxy (For
+                                                    users in sanctioned regions)</label></div>
                                         </div>
                                     </div>
                                 </div>
                             </details>
                         </div>
-
                         <div class="mt-8 flex justify-between items-center">
                             <button type="button" id="back-to-step-2"
-                                class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 transition-all">
-                                <i class="fas fa-arrow-left mr-2"></i> Back
-                            </button>
+                                class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 transition-all"><i
+                                    class="fas fa-arrow-left mr-2"></i> <span class="back-btn-text">Back</span></button>
                             <button id="submit-button" type="submit"
-                                class="px-8 py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-primary-500/50">
-                                <span class="button-text flex items-center justify-center">
-                                    <i class="fas fa-language mr-2"></i> Translate Now
-                                </span>
-                                <span class="button-spinner" style="display: none;">
-                                    <div class="spinner"></div>
-                                </span>
-                            </button>
+                                class="px-8 py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-primary-500/50"><span
+                                    class="button-text">Translate Now</span></button>
                         </div>
                     </section>
                 </form>
@@ -412,16 +403,12 @@
 
             <!-- Progress & Results Area -->
             <div id="results-area" class="mt-8 animate-slide-up" style="display: none;">
-
-                <!-- Progress Display (This part remains) -->
                 <div id="progress-container" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                     <h3 class="text-lg font-semibold mb-4 flex items-center"><i
                             class="fas fa-tasks mr-2 text-primary-600 animate-pulse-slow"></i><span
                             data-i18n="progressTitle">Translation in Progress...</span></h3>
-                    <div class="flex justify-between text-sm mb-1">
-                        <span id="progress-text">0% Complete</span>
-                        <span id="time-estimate">Estimating...</span>
-                    </div>
+                    <div class="flex justify-between text-sm mb-1"><span id="progress-text">0% Complete</span><span
+                            id="time-estimate">Estimating...</span></div>
                     <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3.5">
                         <div id="progress"
                             class="progress-fill bg-gradient-to-r from-primary-500 to-accent-500 h-full rounded-full"
@@ -429,44 +416,32 @@
                     </div>
                     <div id="chunk-status" class="text-sm text-gray-600 dark:text-gray-400 mt-2">Initializing...</div>
                 </div>
-
-                <!-- Error Message (This part remains) -->
                 <div id="error-message" class="mt-6 p-4 rounded-xl" style="display: none;">
                     <div class="flex items-start">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-xl"></i>
-                        </div>
+                        <div class="flex-shrink-0"><i class="fas fa-exclamation-circle text-xl"></i></div>
                         <div class="ml-3">
                             <h3 class="text-md font-bold">An Error Occurred</h3>
                             <div id="error-content" class="text-sm mt-2"></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- NEW: Side-by-Side Editor Container -->
                 <div id="editor-container" class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg"
                     style="display: none;">
-                    <!-- Editor Header -->
                     <div
                         class="p-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200">
-                            <i class="fas fa-edit mr-2 text-primary-500"></i>
-                            Edit Your Translation
-                        </h3>
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200"><i
+                                class="fas fa-edit mr-2 text-primary-500"></i> Edit Your Translation</h3>
                         <div class="flex items-center gap-3">
                             <button id="download-edited-btn"
-                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-all">
-                                <i class="fas fa-download mr-2"></i>
-                                <span data-i18n="downloadFile">Download File</span>
-                            </button>
+                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-all"><i
+                                    class="fas fa-download mr-2"></i> <span data-i18n="downloadFile">Download
+                                    File</span></button>
                             <button id="start-new-from-editor-btn"
-                                class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all">
-                                <i class="fas fa-plus-circle mr-2"></i>
-                                <span data-i18n="startNew">Start New</span>
-                            </button>
+                                class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all"><i
+                                    class="fas fa-plus-circle mr-2"></i> <span data-i18n="startNew">Start
+                                    New</span></button>
                         </div>
                     </div>
-                    <!-- Editor Table -->
                     <div class="overflow-x-auto max-h-[60vh] overflow-y-auto">
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                             <thead
@@ -477,9 +452,7 @@
                                     <th scope="col" class="px-6 py-3">Translated Text (Editable)</th>
                                 </tr>
                             </thead>
-                            <tbody id="editor-tbody">
-                                <!-- Rows will be dynamically inserted here -->
-                            </tbody>
+                            <tbody id="editor-tbody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -491,18 +464,14 @@
             class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 mt-12">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
-                        Created with <i class="fas fa-heart text-red-500 mx-1"></i> by
-                        <a href="https://x.com/yebekhe" target="_blank" rel="noopener noreferrer"
-                            class="font-medium text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300">
-                            yebekhe
-                        </a>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 md:mb-0">Created with <i
+                            class="fas fa-heart text-red-500 mx-1"></i> by <a href="https://x.com/yebekhe"
+                            target="_blank" rel="noopener noreferrer"
+                            class="font-medium text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300">yebekhe</a>
                     </p>
                     <a href="https://plisio.net/donate/9mF8kcrb" target="_blank" rel="noopener noreferrer"
-                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-accent-500 to-purple-600 hover:from-accent-600 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300">
-                        <i class="fas fa-donate mr-2"></i>
-                        <span>Support with Crypto</span>
-                    </a>
+                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-accent-500 to-purple-600 hover:from-accent-600 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"><i
+                            class="fas fa-donate mr-2"></i> <span>Support with Crypto</span></a>
                 </div>
             </div>
         </footer>

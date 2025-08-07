@@ -515,6 +515,7 @@ function splitIntoChunks(array, chunkCount) {
     return chunks;
 }
 
+
 async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
     if (!chunk || chunk.length === 0) return [];
 
@@ -661,7 +662,7 @@ async function handleTranslate(event) {
 
         if (translatableEntries.length === 0) {
             currentAllTranslatedEntries = allParsedEntries;
-            populateEditor(targetLanguage);
+            populateEditor();
             showError("No translatable text found. Original content loaded in editor.", 'success');
             return;
         }
@@ -692,7 +693,7 @@ async function handleTranslate(event) {
             return translatable && translatedTextMap.has(translatable) ? { ...entry, text: translatedTextMap.get(translatable) } : entry;
         });
 
-        populateEditor(targetLanguage);
+        populateEditor();
         
         if (failedChunksData.length > 0) {
             showError(`Translation finished with ${failedChunksData.length} failed chunk(s). Edits can be made before downloading.`);
@@ -710,11 +711,11 @@ async function handleTranslate(event) {
 }
 
 function autoResizeTextarea(textarea) {
-    textarea.style.height = 'auto';
+    textarea.style.height = 'auto'; // Reset height to shrink on deletion
     textarea.style.height = (textarea.scrollHeight) + 'px';
 }
 
-function populateEditor(targetLang) {
+function populateEditor() {
     if (!editorTbody) return;
     editorTbody.innerHTML = '';
 
@@ -725,11 +726,14 @@ function populateEditor(targetLang) {
         tr.className = 'bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600';
         tr.dataset.index = index;
 
+        const originalText = entry.text_original || entry.text;
+        const translatedText = entry.text;
+
         tr.innerHTML = `
             <td class="px-4 py-2 text-center font-medium text-gray-900 dark:text-white">${entry.id}</td>
-            <td class="px-6 py-2">${entry.text_original || entry.text}</td>
+            <td class="px-6 py-2 whitespace-pre-wrap">${originalText}</td>
             <td class="px-6 py-2">
-                <textarea class="w-full p-1 bg-transparent border-0 rounded-md focus:ring-2 focus:ring-primary-500 resize-y" rows="${(entry.text.match(/\n/g) || []).length + 1}">${entry.text}</textarea>
+                <textarea class="w-full p-1 bg-transparent border-0 rounded-md focus:ring-2 focus:ring-primary-500 overflow-hidden" rows="1">${translatedText}</textarea>
             </td>`;
         
         const textarea = tr.querySelector('textarea');
@@ -740,7 +744,8 @@ function populateEditor(targetLang) {
         });
 
         editorTbody.appendChild(tr);
-        autoResizeTextarea(textarea);
+        // Defer the initial resize to ensure the element is in the DOM and has a valid scrollHeight
+        setTimeout(() => autoResizeTextarea(textarea), 0);
     });
     
     progressContainer.style.display = 'none';
@@ -815,7 +820,7 @@ async function handleManualRetry(event) {
         failedChunksData = failedChunksData.filter(fc => fc.index !== internalChunkIndex);
         showError(`Chunk ${internalChunkIndex + 1} successfully translated!`, 'success');
         button.remove();
-        populateEditor(currentTargetLangForRetry); // Re-populate editor with corrected data
+        populateEditor(); // Re-populate editor with corrected data
         if (failedChunksData.length === 0) document.getElementById('retry-container')?.remove();
     } catch (retryError) {
         showError(`Retry failed for Chunk ${internalChunkIndex + 1}: ${retryError.message}`);

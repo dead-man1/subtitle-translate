@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subtitle Translator - AI-Powered Translation Tool</title>
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
-    <!-- Theme Color for Browsers -->
-    <meta name="theme-color" content="#3b82f6">
-    <!-- iOS Specific Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Tailwind CSS -->
@@ -339,16 +331,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
     <!-- Link to your custom JavaScript -->
     <script src="assets/script.js"></script>
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swPath = '/subtitle-translate/sw.js';
-                navigator.serviceWorker.register(swPath)
-                    .then(reg => console.log('ServiceWorker registration successful.', reg.scope))
-                    .catch(err => console.log('ServiceWorker registration failed: ', err));
-            });
-        }
-    </script>
 </body>
 </html>

@@ -148,7 +148,6 @@ function updateLanguage(lang) {
     document.documentElement.lang = lang;
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 
-    // Helper to set text content
     const setText = (selector, key) => {
         const element = document.querySelector(selector);
         if (element) element.textContent = translations[key];
@@ -162,7 +161,6 @@ function updateLanguage(lang) {
         if (element) element.placeholder = translations[key];
     };
 
-    // Apply translations
     setText('#page-title', 'pageTitle');
     setText('#page-title + p', 'pageSubtitle');
     setText('#form-container h2', 'mainHeading');
@@ -171,12 +169,10 @@ function updateLanguage(lang) {
     document.querySelectorAll('.next-btn-text').forEach(el => el.textContent = translations['next']);
     document.querySelectorAll('.back-btn-text').forEach(el => el.textContent = translations['back']);
     
-    // Step Navigator
     setText('#step-1-indicator span:last-child', 'step1Name');
     setText('#step-2-indicator span:last-child', 'step2Name');
     setText('#step-3-indicator span:last-child', 'step3Name');
     
-    // Step 1
     setText('#step-1 h3', 'step1Title');
     setText('#step-1 .space-y-4 > p', 'step1Description');
     setText('label[for="api_key"]', 'apiKeyLabel');
@@ -184,29 +180,25 @@ function updateLanguage(lang) {
     setText('label[for="remember_me"]', 'rememberKey');
     setHtml('#step-1 .bg-blue-50 p', 'getApiKeyLink');
 
-    // Step 2
     setText('#step-2 h3', 'step2Title');
     setText('#select-file-input', 'fileUpload');
     setText('#select-text-input', 'pasteText');
     setText('#dropzone-upload .text-lg', 'dropzone');
     setText('#dropzone-upload .text-sm', 'dropzoneOr');
-    setText('#dropzone-upload .inline-block', 'dropzoneChoose');
+    setText('#dropzone-upload #choose-file-btn', 'dropzoneChoose');
     setText('#file-feedback p', 'fileSelected');
     setText('#remove-file', 'remove');
     setPlaceholder('#srt_text', 'pastePlaceholder');
     setText('#text-input-container p', 'pasteNote');
     
-    // Step 3
     setText('#step-3 h3', 'step3Title');
     setText('label[for="lang-input"]', 'targetLangLabel');
     setPlaceholder('#lang-input', 'targetLangPlaceholder');
-    setText('details[open] summary h4', 'advancedSettings');
-    setText('details:not([open]) summary h4', 'advancedSettings');
+    setText('details summary h4', 'advancedSettings');
     setText('details .bg-amber-50 p', 'advancedWarning');
     setText('label[for="useProxyCheckbox"]', 'useProxyLabel');
     setText('#submit-button .button-text span', 'translateNow');
     
-    // Results
     setText('#results-area #progress-container h3', 'progressTitle');
     setText('#results-area #download-container h3', 'successTitle');
     setText('#results-area #download-container p', 'successText');
@@ -843,37 +835,36 @@ document.addEventListener('DOMContentLoaded', () => {
     startNewTranslationBtn.addEventListener('click', resetWizard);
 
     // Dropzone Configuration
-Dropzone.autoDiscover = false;
-if (dropzoneElement) {
-    myDropzone = new Dropzone(fileInputContainer, { // Attach to the main container for this step
-        url: "#", // Dummy URL
-        autoProcessQueue: false,
-        acceptedFiles: ".srt,.vtt,.ssa,.ass",
-        maxFiles: 1,
-        clickable: ['#dropzone-upload', '#choose-file-btn'], 
-        previewsContainer: false, // We are handling previews manually with our #file-feedback div
-        init: function() {
-            this.on("addedfile", file => {
-                if (this.files.length > 1) {
-                    this.removeFile(this.files[0]);
-                }
-                uploadedFile = file;
-                dropzoneElement.style.display = 'none';
-                fileFeedbackDiv.style.display = 'block';
-                fileNameSpan.textContent = file.name;
-                checkStep2Completion();
-            });
-            this.on("removedfile", () => {
-                uploadedFile = null;
-                dropzoneElement.style.display = 'block';
-                fileFeedbackDiv.style.display = 'none';
-                fileNameSpan.textContent = '';
-                checkStep2Completion();
-            });
-            this.on("error", (file, errorMsg) => {
-                showError(typeof errorMsg === 'string' ? errorMsg : "Invalid file type.");
-                this.removeFile(file);
-            });
-        }
-    });
-}
+    Dropzone.autoDiscover = false;
+    if (dropzoneElement) {
+        myDropzone = new Dropzone(fileInputContainer, {
+            url: "#",
+            autoProcessQueue: false,
+            acceptedFiles: ".srt,.vtt,.ssa,.ass",
+            maxFiles: 1,
+            clickable: ['#dropzone-upload', '#choose-file-btn'], 
+            previewsContainer: false,
+            init: function() {
+                this.on("addedfile", file => {
+                    if (this.files.length > 1) this.removeFile(this.files[0]);
+                    uploadedFile = file;
+                    dropzoneElement.style.display = 'none';
+                    fileFeedbackDiv.style.display = 'block';
+                    fileNameSpan.textContent = file.name;
+                    checkStep2Completion();
+                });
+                this.on("removedfile", () => {
+                    uploadedFile = null;
+                    dropzoneElement.style.display = 'block';
+                    fileFeedbackDiv.style.display = 'none';
+                    fileNameSpan.textContent = '';
+                    checkStep2Completion();
+                });
+                this.on("error", (file, errorMsg) => {
+                    showError(typeof errorMsg === 'string' ? errorMsg : "Invalid file type.");
+                    this.removeFile(file);
+                });
+            }
+        });
+    }
+});

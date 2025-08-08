@@ -44,6 +44,7 @@ const i18n = {
         'progressEstimating': 'Estimating...',
         'progressCalculating': 'Calculating...',
         'progressRemaining': 'remaining',
+        'editTitle': 'Edit Your Translation',
         'successTitle': 'Translation Complete!',
         'successText': 'Your translated file is ready for download.',
         'errorTitle': 'An Error Occurred',
@@ -100,6 +101,7 @@ const i18n = {
         'progressEstimating': 'در حال تخمین...',
         'progressCalculating': 'در حال محاسبه...',
         'progressRemaining': 'باقیمانده',
+        'editTitle': 'ترجمه خود را ویرایش کنید',
         'successTitle': 'ترجمه کامل شد!',
         'successText': 'فایل ترجمه شده شما برای دانلود آماده است.',
         'errorTitle': 'خطایی روی داد',
@@ -115,6 +117,14 @@ const i18n = {
 };
 
 // --- Global Variables & State ---
+const AVAILABLE_MODELS = [
+    'gemini-2.5-pro',
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-2.5-flash-lite',
+    'gemini-2.0-flash-lite'
+];
+
 let uiLang = 'en';
 let uploadedFile = null;
 let translationMemory = JSON.parse(localStorage.getItem('translationMemory') || '{}');
@@ -125,8 +135,9 @@ let currentAllTranslatedEntries = [];
 let currentOriginalFileName = 'translation';
 let currentOriginalFormat = 'srt';
 let currentApiKey = '';
-let currentModel = 'gemini-1.5-flash-latest';
+let currentModel = 'gemini-2.5-flash';
 let currentTemperature = 0.7;
+let currentRequestDelay = 4000;
 let currentTargetLangForRetry = '';
 const proxyUrl = 'https://middleman.yebekhe.workers.dev';
 
@@ -138,6 +149,9 @@ let selectFileInputBtn, selectTextInputBtn, fileInputContainer, textInputContain
 let fileFeedbackDiv, fileNameSpan, removeFileBtn, errorContentDiv;
 let myDropzone;
 let editorContainer, editorTbody, downloadEditedBtn, startNewFromEditorBtn;
+let logViewerContainer, logOutput, toggleLogBtn, copyLogBtn, clearLogBtn;
+let chunkStrategyRadios, manualChunkContainer, chunkCountManualInput, requestDelayInput;
+let modelSwitchModal, modelSwitchDialog, modalSwitchBtn, modalCancelBtn;
 
 
 // --- UI & WIZARD MANAGEMENT ---
@@ -175,14 +189,14 @@ function updateLanguage(lang) {
     setText('#step-2-indicator span:last-child', 'step2Name');
     setText('#step-3-indicator span:last-child', 'step3Name');
     
-    setText('#step-1 h3', 'step1Title');
+    setText('#step-1 h3 > span', 'step1Title');
     setText('#step-1 .space-y-4 > p', 'step1Description');
     setText('label[for="api_key"]', 'apiKeyLabel');
     setPlaceholder('#api_key', 'apiKeyPlaceholder');
     setText('label[for="remember_me"]', 'rememberKey');
     setHtml('#step-1 .bg-blue-50 p', 'getApiKeyLink');
 
-    setText('#step-2 h3', 'step2Title');
+    setText('#step-2 h3 > span', 'step2Title');
     setText('#select-file-input', 'fileUpload');
     setText('#select-text-input', 'pasteText');
     setText('#dropzone-upload .text-lg', 'dropzone');
@@ -193,10 +207,10 @@ function updateLanguage(lang) {
     setPlaceholder('#srt_text', 'pastePlaceholder');
     setText('#text-input-container p', 'pasteNote');
     
-    setText('#step-3 h3', 'step3Title');
+    setText('#step-3 h3 > span', 'step3Title');
     setText('label[for="lang-input"]', 'targetLangLabel');
     setPlaceholder('#lang-input', 'targetLangPlaceholder');
-    setText('details summary h4', 'advancedSettings');
+    setText('details summary h4 > span', 'advancedSettings');
     setText('details .bg-amber-50 p', 'advancedWarning');
     setText('label[for="useProxyCheckbox"]', 'useProxyLabel');
     setText('#submit-button .button-text', 'translateNow');
@@ -320,10 +334,14 @@ function resetUIForNewTranslation() {
     
     hideError();
     document.getElementById('retry-container')?.remove();
+    if(editorContainer) editorContainer.style.display = 'none';
+    if(logViewerContainer) logViewerContainer.style.display = 'none';
     
     failedChunksData = [];
     currentAllTranslatedEntries = [];
 }
+
+// Replace the existing updateProgress function with this one.
 
 function updateProgress(chunkIndex, totalChunks, startTime) {
     if (!progressContainer || progressContainer.style.display === 'none') return;
@@ -333,18 +351,81 @@ function updateProgress(chunkIndex, totalChunks, startTime) {
     progressText.textContent = `${progressPercentage}% ${i18n[uiLang].progressComplete}`;
     chunkStatusSpan.textContent = `Processing chunk: ${currentDisplayChunk}/${totalChunks}`;
 
-    if (chunkIndex === 0 && startTime && totalChunks > 1) {
+    if (startTime) {
         timeEstimateSpan.textContent = i18n[uiLang].progressCalculating;
-    } else if (firstChunkTime > 0 && chunkIndex > 0 && totalChunks > 1) {
+    } else if (firstChunkTime > 0) {
         const remainingChunks = totalChunks - currentDisplayChunk;
-        if (remainingChunks >= 0) {
+        if (remainingChunks > 0) {
             const estimatedRemainingTime = remainingChunks * firstChunkTime;
             const minutes = Math.floor(estimatedRemainingTime / 60);
             const seconds = Math.floor(estimatedRemainingTime % 60);
             timeEstimateSpan.textContent = `~${minutes}m ${seconds}s ${i18n[uiLang].progressRemaining}`;
+        } else {
+            // This is the last chunk, or it's already done
+            timeEstimateSpan.textContent = i18n[uiLang].progressComplete;
         }
     }
 }
+
+// --- LOGGING UTILITY ---
+function clearLog() {
+    if (logOutput) logOutput.innerHTML = '';
+}
+
+function logMessage(message, type = 'info') {
+    if (!logOutput) return;
+    const now = new Date();
+    const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+    
+    const p = document.createElement('p');
+    let iconClass = 'fas fa-info-circle text-blue-400';
+    let messageColor = 'text-gray-300';
+
+    if (type === 'success') {
+        iconClass = 'fas fa-check-circle text-green-400';
+        messageColor = 'text-green-300';
+    } else if (type === 'warn') {
+        iconClass = 'fas fa-exclamation-triangle text-yellow-400';
+        messageColor = 'text-yellow-300';
+    } else if (type === 'error') {
+        iconClass = 'fas fa-times-circle text-red-400';
+        messageColor = 'text-red-300';
+    }
+    p.innerHTML = `<span class="text-gray-500">${timestamp}</span> <i class="${iconClass} mx-2"></i> <span class="${messageColor}">${message}</span>`;
+    logOutput.appendChild(p);
+    logOutput.scrollTop = logOutput.scrollHeight;
+}
+
+// --- MODAL MANAGEMENT ---
+let resolveModalPromise = null;
+
+function showModelSwitchModal(failedModel, newModel) {
+    return new Promise((resolve) => {
+        resolveModalPromise = resolve;
+
+        const modalMessage = modelSwitchModal.querySelector('#modal-message');
+        modalMessage.textContent = `You have reached your daily free tier request limit for the model "${failedModel}". You can either wait for your quota to reset, or switch to the alternative model "${newModel}" to continue the translation.`;
+
+        modelSwitchModal.style.display = 'flex';
+        setTimeout(() => {
+            modelSwitchDialog.classList.remove('opacity-0', 'scale-95');
+            modelSwitchDialog.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    });
+}
+
+function hideModal() {
+    modelSwitchDialog.classList.remove('opacity-100', 'scale-100');
+    modelSwitchDialog.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => {
+        modelSwitchModal.style.display = 'none';
+        if (resolveModalPromise) {
+            resolveModalPromise(null);
+            resolveModalPromise = null;
+        }
+    }, 200);
+}
+
 
 // --- PARSING, TRANSLATION, and CORE LOGIC ---
 function clearTranslationMemory() {
@@ -516,8 +597,6 @@ function splitIntoChunks(array, chunkCount) {
 }
 
 
-// Replace the existing fetchTranslation function in your script.js with this one.
-
 async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
     if (!chunk || chunk.length === 0) return [];
 
@@ -538,10 +617,40 @@ async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
 
     const fetchOptions = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(finalPayload) };
     
+    logMessage(`Fetching translation for a sub-chunk of size ${chunk.length} using model "${model}".`);
     const response = await fetch(targetUrl, fetchOptions);
+
     if (!response.ok) {
+        if (response.status === 429) {
+            let errorData;
+            try {
+                errorData = await response.json();
+                const quotaFailure = errorData?.error?.details?.find(d => d["@type"]?.includes("QuotaFailure"));
+                
+                if (quotaFailure?.violations?.some(v => v.quotaId?.includes('FreeTier'))) {
+                    throw new Error(`QUOTA_EXHAUSTED ${model}`);
+                }
+
+                const retryInfo = errorData?.error?.details?.find(d => d["@type"]?.includes("RetryInfo"));
+                let waitMs = 61000;
+                if (retryInfo?.retryDelay) {
+                    const seconds = parseInt(retryInfo.retryDelay, 10);
+                    if (!isNaN(seconds) && seconds > 0) {
+                        waitMs = (seconds * 1000) + 1000;
+                        logMessage(`Rate limit hit. API suggested a ${seconds}s delay. Waiting...`, 'warn');
+                    }
+                } else {
+                    logMessage(`Rate limit hit. Waiting for the default ${Math.round(waitMs / 1000)}s...`, 'warn');
+                }
+                throw new Error(`RATE_LIMIT_HIT ${waitMs}`);
+            } catch (e) {
+                if (e.message.startsWith('QUOTA_EXHAUSTED')) throw e;
+                throw new Error(`API error 429: Could not parse error details.`);
+            }
+        }
         throw new Error(`API error ${response.status}: ${await response.text()}`);
     }
+
     const data = await response.json();
     const responseText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (responseText === undefined) throw new Error('Invalid API response structure.');
@@ -549,50 +658,84 @@ async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
     let translatedLines = responseText.trim().split(separator.trim());
     
     if (translatedLines.length === chunk.length + 1 && translatedLines[translatedLines.length - 1].trim() === '') {
-        console.log("Corrected mismatch: Removed trailing empty line from AI response.");
+        logMessage(`Corrected mismatch: Removed trailing empty line for chunk size ${chunk.length}.`, 'warn');
         translatedLines.pop();
     }
 
     if (responseText.trim() !== "" && translatedLines.length !== chunk.length) {
-         throw new Error(`Line count mismatch. Expected ${chunk.length}, got ${translatedLines.length}`);
+         const errorMsg = `Line count mismatch. Expected ${chunk.length}, got ${translatedLines.length}.`;
+         logMessage(errorMsg, 'error');
+         logMessage(`Problematic response (first 100 chars): "${responseText.substring(0, 100)}..."`);
+         throw new Error(errorMsg);
     }
     
+    logMessage(`Successfully translated sub-chunk of size ${chunk.length}.`, 'success');
     return translatedLines.map(line => line.trim());
 }
 
-async function translateChunkRecursively(chunk, apiKey, targetLang, model, temperature) {
-    if (chunk.length <= 1) {
-        try {
-            return await fetchTranslation(chunk, apiKey, targetLang, model, temperature);
-        } catch (e) {
-            console.error(`Final attempt failed for chunk of size 1. Returning original. Error:`, e.message);
-            return chunk.map(entry => entry.text);
-        }
-    }
-
+async function translateChunkRecursively(chunk, apiKey, targetLang, model, temperature, requestDelay) {
     try {
+        if (chunk.length <= 1) {
+            return await fetchTranslation(chunk, apiKey, targetLang, model, temperature);
+        }
         return await fetchTranslation(chunk, apiKey, targetLang, model, temperature);
     } catch (error) {
+        if (error.message.startsWith('RATE_LIMIT_HIT')) {
+            const waitMs = parseInt(error.message.split(' ')[1], 10);
+            await new Promise(resolve => setTimeout(resolve, waitMs));
+            return translateChunkRecursively(chunk, apiKey, targetLang, model, temperature, requestDelay);
+        }
+        
+        if (error.message.startsWith('QUOTA_EXHAUSTED')) {
+            const failedModel = error.message.split(' ')[1];
+            logMessage(`Daily quota exhausted for model: ${failedModel}. Prompting user to switch.`, 'error');
+            
+            const failedIndex = AVAILABLE_MODELS.indexOf(failedModel);
+            const nextIndex = (failedIndex + 1) % AVAILABLE_MODELS.length;
+            const newModel = AVAILABLE_MODELS[nextIndex];
+
+            const userChoice = await showModelSwitchModal(failedModel, newModel);
+            
+            if (userChoice === 'switch') {
+                logMessage(`User chose to switch. Retrying with new model: ${newModel}.`, 'info');
+                currentModel = newModel;
+                modelSelect.value = newModel;
+                return translateChunkRecursively(chunk, apiKey, targetLang, newModel, temperature, requestDelay);
+            } else {
+                logMessage('User cancelled translation due to quota exhaustion.', 'warn');
+                throw new Error('Translation cancelled by user.');
+            }
+        }
+        
         if (error.message.includes('Line count mismatch')) {
-            console.warn(`Line count mismatch for chunk size ${chunk.length}. Splitting.`);
+            logMessage(`Line count mismatch for chunk size ${chunk.length}. Processing sequentially.`, 'warn');
             const midPoint = Math.ceil(chunk.length / 2);
             const firstHalf = chunk.slice(0, midPoint);
             const secondHalf = chunk.slice(midPoint);
 
-            const [translatedFirst, translatedSecond] = await Promise.all([
-                translateChunkRecursively(firstHalf, apiKey, targetLang, model, temperature),
-                translateChunkRecursively(secondHalf, apiKey, targetLang, model, temperature)
-            ]);
+            // *** CRITICAL FIX: Process sub-chunks sequentially, not in parallel ***
+            const translatedChunks = [];
+            
+            // Process the first half
+            const translatedFirst = await translateChunkRecursively(firstHalf, apiKey, targetLang, model, temperature, requestDelay);
+            translatedChunks.push(...translatedFirst);
 
-            return [...translatedFirst, ...translatedSecond];
+            // Respect the user-defined delay before processing the second half
+            await new Promise(resolve => setTimeout(resolve, requestDelay));
+            
+            // Process the second half
+            const translatedSecond = await translateChunkRecursively(secondHalf, apiKey, targetLang, model, temperature, requestDelay);
+            translatedChunks.push(...translatedSecond);
+
+            return translatedChunks;
         } else {
-            console.error("A non-recoverable error occurred during translation:", error);
+            logMessage(`A non-recoverable error occurred during translation: ${error.message}`, 'error');
             throw error;
         }
     }
 }
 
-async function translateChunk(chunk, apiKey, targetLang, model, temperature) {
+async function translateChunk(chunk, apiKey, targetLang, model, temperature, requestDelay) {
     const textsToTranslate = [];
     const cachedResults = new Map();
 
@@ -627,21 +770,26 @@ async function translateChunk(chunk, apiKey, targetLang, model, temperature) {
         }
     }
     
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, requestDelay));
     return finalTranslations;
 }
+
+// Replace the existing handleTranslate function with this one.
 
 async function handleTranslate(event) {
     event.preventDefault();
     formContainer.style.display = 'none';
     resultsArea.style.display = 'block';
     resetUIForNewTranslation();
+    clearLog();
+    logMessage('Translation process started.');
 
     const targetLanguage = langInput.value.trim();
 
     currentApiKey = apiKeyInput.value.trim();
     currentModel = modelSelect.value;
     currentTemperature = parseFloat(temperatureInput.value);
+    currentRequestDelay = parseInt(requestDelayInput.value, 10) || 4000;
     currentTargetLangForRetry = targetLanguage;
     
     let subtitleContent = '';
@@ -663,21 +811,46 @@ async function handleTranslate(event) {
     firstChunkTime = 0;
 
     try {
+        logMessage(`Parsing ${currentOriginalFormat.toUpperCase()} file...`);
         const allParsedEntries = parseSubtitle(subtitleContent, currentOriginalFormat);
+        logMessage(`Found ${allParsedEntries.length} total entries.`);
+        
         allParsedEntries.forEach(entry => { if (entry.text) entry.text_original = entry.text; });
         
         const translatableEntries = allParsedEntries.filter(e => e.text?.trim());
+        logMessage(`${translatableEntries.length} entries contain text to be translated.`);
 
         if (translatableEntries.length === 0) {
             currentAllTranslatedEntries = allParsedEntries;
             populateEditor();
             showError("No translatable text found. Original content loaded in editor.", 'success');
+            logMessage('No translatable text found. Process finished.', 'success');
             return;
         }
         
-        const chunkCount = Math.min(20, translatableEntries.length);
+        let chunkCount;
+        const chunkStrategy = document.querySelector('input[name="chunk_strategy"]:checked').value;
+        switch (chunkStrategy) {
+            case 'auto':
+                const idealLinesPerChunk = 25;
+                chunkCount = Math.ceil(translatableEntries.length / idealLinesPerChunk);
+                chunkCount = Math.max(1, Math.min(chunkCount, 100));
+                logMessage(`Automatic strategy: Calculated ${chunkCount} chunks for ${translatableEntries.length} lines.`, 'info');
+                break;
+            case 'manual':
+                chunkCount = parseInt(chunkCountManualInput.value, 10) || 20;
+                chunkCount = Math.max(1, Math.min(chunkCount, 100));
+                logMessage(`Manual strategy: Using ${chunkCount} chunks.`, 'info');
+                break;
+            default:
+                chunkCount = 20;
+                logMessage(`Default strategy: Using ${chunkCount} chunks.`, 'info');
+                break;
+        }
+        
         const chunks = splitIntoChunks(translatableEntries, chunkCount);
         const totalChunks = chunks.length;
+        logMessage(`Splitting into ${totalChunks} actual chunks for processing.`);
         const translatedTextMap = new Map();
         
         updateProgress(-1, totalChunks, startTime);
@@ -686,11 +859,19 @@ async function handleTranslate(event) {
             updateProgress(i, totalChunks, i === 0 ? startTime : null);
             try {
                 const chunkStartTime = performance.now();
-                const translatedTexts = await translateChunk(chunks[i], currentApiKey, targetLanguage, currentModel, currentTemperature);
-                if (i === 0) firstChunkTime = (performance.now() - chunkStartTime) / 1000;
+                const translatedTexts = await translateChunk(chunks[i], currentApiKey, targetLanguage, currentModel, currentTemperature, currentRequestDelay);
+                
+                // *** THIS IS THE FIX ***
+                if (i === 0 && totalChunks > 1) {
+                    firstChunkTime = (performance.now() - chunkStartTime) / 1000;
+                    logMessage(`First chunk took ${firstChunkTime.toFixed(1)}s. Estimating remaining time.`, 'info');
+                    // Immediately update the progress bar with the new estimate
+                    updateProgress(i, totalChunks, null);
+                }
+                
                 chunks[i].forEach((entry, idx) => translatedTextMap.set(entry, translatedTexts[idx] || entry.text));
             } catch (chunkError) {
-                console.error(`Chunk ${i + 1} failed permanently:`, chunkError);
+                logMessage(`Chunk ${i + 1} failed permanently: ${chunkError.message}`, 'error');
                 failedChunksData.push({ index: i, chunkData: chunks[i], reason: chunkError.message });
                 chunks[i].forEach(entry => translatedTextMap.set(entry, entry.text));
             }
@@ -701,17 +882,22 @@ async function handleTranslate(event) {
             return translatable && translatedTextMap.has(translatable) ? { ...entry, text: translatedTextMap.get(translatable) } : entry;
         });
 
+        logMessage('All chunks processed. Populating editor.');
         populateEditor();
         
         if (failedChunksData.length > 0) {
-            showError(`Translation finished with ${failedChunksData.length} failed chunk(s). Edits can be made before downloading.`);
+            const msg = `Translation finished with ${failedChunksData.length} failed chunk(s). Edits can be made before downloading.`;
+            showError(msg);
+            logMessage(msg, 'warn');
             displayRetryButtons();
         } else {
             showError('Translation successful! You can review and edit the results below.', 'success');
+            logMessage('Translation successful!', 'success');
         }
 
     } catch (error) {
         progressContainer.style.display = 'none';
+        logMessage(`A critical error occurred: ${error.message}`, 'error');
         showError(`A critical error occurred: ${error.message}`);
     } finally {
         saveApiKey();
@@ -719,7 +905,7 @@ async function handleTranslate(event) {
 }
 
 function autoResizeTextarea(textarea) {
-    textarea.style.height = 'auto'; // Reset height to shrink on deletion
+    textarea.style.height = 'auto';
     textarea.style.height = (textarea.scrollHeight) + 'px';
 }
 
@@ -752,7 +938,6 @@ function populateEditor() {
         });
 
         editorTbody.appendChild(tr);
-        // Defer the initial resize to ensure the element is in the DOM and has a valid scrollHeight
         setTimeout(() => autoResizeTextarea(textarea), 0);
     });
     
@@ -816,7 +1001,7 @@ async function handleManualRetry(event) {
     if (!failedChunkInfo) return;
     
     try {
-        const translatedTexts = await translateChunk(failedChunkInfo.chunkData, currentApiKey, currentTargetLangForRetry, currentModel, currentTemperature);
+        const translatedTexts = await translateChunk(failedChunkInfo.chunkData, currentApiKey, currentTargetLangForRetry, currentModel, currentTemperature, currentRequestDelay);
         const retriedMap = new Map();
         failedChunkInfo.chunkData.forEach((entry, idx) => retriedMap.set(entry, translatedTexts[idx] || entry.text));
         
@@ -828,7 +1013,7 @@ async function handleManualRetry(event) {
         failedChunksData = failedChunksData.filter(fc => fc.index !== internalChunkIndex);
         showError(`Chunk ${internalChunkIndex + 1} successfully translated!`, 'success');
         button.remove();
-        populateEditor(); // Re-populate editor with corrected data
+        populateEditor();
         if (failedChunksData.length === 0) document.getElementById('retry-container')?.remove();
     } catch (retryError) {
         showError(`Retry failed for Chunk ${internalChunkIndex + 1}: ${retryError.message}`);
@@ -880,6 +1065,19 @@ document.addEventListener('DOMContentLoaded', () => {
     editorTbody = document.getElementById('editor-tbody');
     downloadEditedBtn = document.getElementById('download-edited-btn');
     startNewFromEditorBtn = document.getElementById('start-new-from-editor-btn');
+    logViewerContainer = document.getElementById('log-viewer-container');
+    logOutput = document.getElementById('log-output');
+    toggleLogBtn = document.getElementById('toggle-log-btn');
+    copyLogBtn = document.getElementById('copy-log-btn');
+    clearLogBtn = document.getElementById('clear-log-btn');
+    chunkStrategyRadios = document.querySelectorAll('input[name="chunk_strategy"]');
+    manualChunkContainer = document.getElementById('manual_chunk_container');
+    chunkCountManualInput = document.getElementById('chunk_count_manual');
+    requestDelayInput = document.getElementById('request-delay');
+    modelSwitchModal = document.getElementById('model-switch-modal');
+    modelSwitchDialog = document.getElementById('model-switch-dialog');
+    modalSwitchBtn = document.getElementById('modal-switch-btn');
+    modalCancelBtn = document.getElementById('modal-cancel-btn');
 
     // Initial Page Setup
     updateLanguage(localStorage.getItem('language') === 'fa' ? 'fa' : 'en');
@@ -918,6 +1116,39 @@ document.addEventListener('DOMContentLoaded', () => {
     translateForm.addEventListener('submit', handleTranslate);
     downloadEditedBtn.addEventListener('click', generateDownloadFromEditor);
     startNewFromEditorBtn.addEventListener('click', resetWizard);
+    
+    toggleLogBtn.addEventListener('click', () => {
+        const isHidden = logViewerContainer.style.display === 'none';
+        logViewerContainer.style.display = isHidden ? 'block' : 'none';
+    });
+    clearLogBtn.addEventListener('click', clearLog);
+    copyLogBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(logOutput.innerText)
+            .then(() => {
+                copyLogBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
+                setTimeout(() => { copyLogBtn.innerHTML = '<i class="fas fa-copy mr-1"></i> Copy'; }, 2000);
+            });
+    });
+
+    chunkStrategyRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            manualChunkContainer.style.display = e.target.value === 'manual' ? 'block' : 'none';
+        });
+    });
+
+    modalSwitchBtn.addEventListener('click', () => {
+        if (resolveModalPromise) resolveModalPromise('switch');
+        resolveModalPromise = null;
+        hideModal();
+    });
+    modalCancelBtn.addEventListener('click', () => {
+        if (resolveModalPromise) resolveModalPromise('cancel');
+        resolveModalPromise = null;
+        hideModal();
+    });
+    modelSwitchModal.addEventListener('click', (e) => {
+        if (e.target === modelSwitchModal) hideModal();
+    });
 
     // Dropzone Configuration
     Dropzone.autoDiscover = false;

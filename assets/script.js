@@ -516,6 +516,8 @@ function splitIntoChunks(array, chunkCount) {
 }
 
 
+// Replace the existing fetchTranslation function in your script.js with this one.
+
 async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
     if (!chunk || chunk.length === 0) return [];
 
@@ -544,7 +546,13 @@ async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
     const responseText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (responseText === undefined) throw new Error('Invalid API response structure.');
     
-    const translatedLines = responseText.trim().split(separator.trim());
+    let translatedLines = responseText.trim().split(separator.trim());
+    
+    if (translatedLines.length === chunk.length + 1 && translatedLines[translatedLines.length - 1].trim() === '') {
+        console.log("Corrected mismatch: Removed trailing empty line from AI response.");
+        translatedLines.pop();
+    }
+
     if (responseText.trim() !== "" && translatedLines.length !== chunk.length) {
          throw new Error(`Line count mismatch. Expected ${chunk.length}, got ${translatedLines.length}`);
     }

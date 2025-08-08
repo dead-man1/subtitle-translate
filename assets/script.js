@@ -832,14 +832,12 @@ async function handleTranslate(event) {
         const chunkStrategy = document.querySelector('input[name="chunk_strategy"]:checked').value;
         switch (chunkStrategy) {
             case 'auto':
-                const idealLinesPerChunk = 25;
+                const idealLinesPerChunk = 50;
                 chunkCount = Math.ceil(translatableEntries.length / idealLinesPerChunk);
-                chunkCount = Math.max(1, Math.min(chunkCount, 100));
                 logMessage(`Automatic strategy: Calculated ${chunkCount} chunks for ${translatableEntries.length} lines.`, 'info');
                 break;
             case 'manual':
-                chunkCount = parseInt(chunkCountManualInput.value, 10) || 20;
-                chunkCount = Math.max(1, Math.min(chunkCount, 100));
+                chunkCount = Math.ceil(parseInt(chunkCountManualInput.value, 10)) || 20;
                 logMessage(`Manual strategy: Using ${chunkCount} chunks.`, 'info');
                 break;
             default:

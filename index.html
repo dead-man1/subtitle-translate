@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subtitle Translator - AI-Powered Translation Tool</title>
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Vazirmatn Font for Persian -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet"
+        type="text/css" />
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -32,49 +36,142 @@
         }
     </script>
     <style>
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-        .spinner { border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top: 3px solid white; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .progress-fill { transition: width 0.3s ease-in-out; }
-        details > summary { list-style: none; } 
-        details > summary::-webkit-details-marker { display: none; }
-        .details-arrow { transition: transform 0.3s; }
-        details[open] .details-arrow { transform: rotate(180deg); }
-        [data-step] { display: none; }
-        [data-step].active { display: block; animation: fadeIn 0.5s ease-in-out; }
-        #log-output::-webkit-scrollbar { width: 6px; }
-        #log-output::-webkit-scrollbar-track { background: #1a202c; }
-        #log-output::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 3px; }
-        #log-output::-webkit-scrollbar-thumb:hover { background: #718096; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .progress-fill {
+            transition: width 0.3s ease-in-out;
+        }
+
+        details>summary {
+            list-style: none;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .details-arrow {
+            transition: transform 0.3s;
+        }
+
+        details[open] .details-arrow {
+            transform: rotate(180deg);
+        }
+
+        [data-step] {
+            display: none;
+        }
+
+        [data-step].active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        #log-output::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #log-output::-webkit-scrollbar-track {
+            background: #1a202c;
+        }
+
+        #log-output::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 3px;
+        }
+
+        #log-output::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+
+        .find-highlight {
+            background-color: #facc15;
+            color: #1f2937;
+        }
+
+        .lang-fa,
+        .lang-fa body,
+        .lang-fa input,
+        .lang-fa select,
+        .lang-fa textarea,
+        .lang-fa button {
+            font-family: 'Vazirmatn', sans-serif;
+        }
     </style>
 </head>
+
 <body class="h-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Background Pattern -->
     <div class="fixed inset-0 -z-10">
-        <div class="absolute inset-0 bg-gradient-to-br from-primary-50/10 to-accent-50/10 dark:from-gray-800/20 dark:to-gray-900/20"></div>
-        <div class="absolute inset-0 opacity-30" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+        <div
+            class="absolute inset-0 bg-gradient-to-br from-primary-50/10 to-accent-50/10 dark:from-gray-800/20 dark:to-gray-900/20">
+        </div>
+        <div class="absolute inset-0 opacity-30" style="background-image: url('data:image/svg+xml,%3Csvg width=" 60"
+            height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" %3E%3Cg fill="none" fill-rule="evenodd"
+            %3E%3Cg fill="%239C92AC" fill-opacity="0.1" %3E%3Cpath
+            d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"
+            /%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
     </div>
 
     <!-- Main Container -->
     <div class="relative z-10 min-h-full flex flex-col">
         <!-- Header -->
-        <header class="sticky top-0 z-20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <header
+            class="sticky top-0 z-20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-gray-700">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div class="flex justify-between items-center">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-r from-primary-600 to-accent-600 flex items-center justify-center">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-gradient-to-r from-primary-600 to-accent-600 flex items-center justify-center">
                             <i class="fas fa-language text-white text-lg"></i>
                         </div>
                         <div>
-                            <h1 id="page-title" class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">Subtitle Translator</h1>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">AI-Powered Translation</p>
+                            <h1 id="page-title"
+                                class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent"
+                                data-i18n="pageTitle">Subtitle Translator</h1>
+                            <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="pageSubtitle">AI-Powered
+                                Translation</p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button id="languageToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" title="Toggle language (English/Persian)"><i class="fas fa-language text-gray-600 dark:text-gray-300 group-hover:text-primary-600"></i></button>
-                        <button id="clear-memory-button" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group" title="Clear translation memory"><i class="fas fa-trash text-gray-600 dark:text-gray-300 group-hover:text-red-600"></i></button>
+                        <button id="languageToggle"
+                            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+                            title="Toggle language (English/Persian)"><i
+                                class="fas fa-language text-gray-600 dark:text-gray-300 group-hover:text-primary-600"></i></button>
+                        <button id="clear-memory-button"
+                            class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+                            title="Clear translation memory"><i
+                                class="fas fa-trash text-gray-600 dark:text-gray-300 group-hover:text-red-600"></i></button>
                     </div>
                 </div>
             </div>
@@ -84,29 +181,37 @@
         <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
             <div id="form-container">
                 <div class="text-center mb-8 animate-fade-in">
-                    <h2 id="main-heading" class="text-3xl font-bold mb-2">Translate Subtitles in 3 Easy Steps</h2>
-                    <p id="upload-instructions" class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Follow the steps below to get your subtitles translated by AI.</p>
+                    <h2 id="main-heading" class="text-3xl font-bold mb-2" data-i18n="mainHeading">Translate Subtitles in
+                        3 Easy Steps</h2>
+                    <p id="upload-instructions" class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto"
+                        data-i18n="mainSubheading">Follow the steps below to get your subtitles translated by AI.</p>
                 </div>
-                
+
                 <!-- Step Navigator -->
                 <nav aria-label="Progress" class="mb-12">
                     <ol role="list" class="space-y-4 md:flex md:space-x-8 md:space-y-0">
                         <li class="md:flex-1">
-                            <div id="step-1-indicator" class="group flex flex-col border-l-4 border-primary-600 py-2 pl-4 md:border-l-0 md:border-t-4 md:pl-0 md:pt-4 md:pb-0">
-                                <span class="text-sm font-medium text-primary-600">Step 1</span>
-                                <span class="text-sm font-medium">API Setup</span>
+                            <div id="step-1-indicator"
+                                class="group flex flex-col border-s-4 border-primary-600 py-2 ps-4 md:border-s-0 md:border-t-4 md:ps-0 md:pt-4 md:pb-0">
+                                <span class="text-sm font-medium text-primary-600" data-i18n="step1Indicator">Step
+                                    1</span>
+                                <span class="text-sm font-medium" data-i18n="step1Name">API Setup</span>
                             </div>
                         </li>
                         <li class="md:flex-1">
-                            <div id="step-2-indicator" class="group flex flex-col border-l-4 border-gray-200 py-2 pl-4 md:border-l-0 md:border-t-4 md:pl-0 md:pt-4 md:pb-0 dark:border-gray-700">
-                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Step 2</span>
-                                <span class="text-sm font-medium">Add Content</span>
+                            <div id="step-2-indicator"
+                                class="group flex flex-col border-s-4 border-gray-200 py-2 ps-4 md:border-s-0 md:border-t-4 md:ps-0 md:pt-4 md:pb-0 dark:border-gray-700">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                                    data-i18n="step2Indicator">Step 2</span>
+                                <span class="text-sm font-medium" data-i18n="step2Name">Add Content</span>
                             </div>
                         </li>
                         <li class="md:flex-1">
-                            <div id="step-3-indicator" class="group flex flex-col border-l-4 border-gray-200 py-2 pl-4 md:border-l-0 md:border-t-4 md:pl-0 md:pt-4 md:pb-0 dark:border-gray-700">
-                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Step 3</span>
-                                <span class="text-sm font-medium">Translate</span>
+                            <div id="step-3-indicator"
+                                class="group flex flex-col border-s-4 border-gray-200 py-2 ps-4 md:border-s-0 md:border-t-4 md:ps-0 md:pt-4 md:pb-0 dark:border-gray-700">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                                    data-i18n="step3Indicator">Step 3</span>
+                                <span class="text-sm font-medium" data-i18n="step3Name">Translate</span>
                             </div>
                         </li>
                     </ol>
@@ -116,102 +221,186 @@
                 <!-- Main Form -->
                 <form id="translate-form" class="space-y-6">
                     <!-- Step 1: API Key -->
-                    <section id="step-1" data-step class="active bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
-                        <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fas fa-key mr-3 text-primary-600"></i><span>Step 1: Configure Your API Key</span></h3>
-                        <div class="space-y-4">
-                            <p class="text-sm text-gray-600 dark:text-gray-400">
-                                This tool uses the Gemini API. Please provide your API key to proceed. Your key is stored locally in your browser and is never sent to our servers.
-                            </p>
+                    <section id="step-1" data-step
+                        class="active bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
+                        <h3 class="text-xl font-bold mb-4 flex items-center"><i
+                                class="fas fa-key me-3 text-primary-600"></i><span data-i18n="step1Title">Step 1:
+                                Configure Your API Key</span></h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-6" data-i18n="step1Description">This tool
+                            uses the Gemini API. Please provide your API key to proceed. Your key is stored locally in
+                            your browser and is never sent to our servers.</p>
+
+                        <div class="space-y-6">
+                            <!-- Key Selection -->
                             <div>
-                                <label for="api_key" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Gemini API Key</label>
-                                <div class="relative">
-                                    <input type="password" id="api_key" name="api_key" class="w-full pl-4 pr-12 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700" placeholder="Enter your Gemini API key" required>
-                                    <button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-gray-700" id="togglePasswordBtn" aria-label="Toggle API key visibility"><i class="fas fa-eye"></i></button>
+                                <label for="api-key-select"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                    data-i18n="selectApiKeyLabel">Select an API Key</label>
+                                <div class="flex items-center gap-2">
+                                    <select id="api-key-select"
+                                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-primary-500"></select>
+                                    <button type="button" id="delete-key-btn" title="Delete selected key"
+                                        class="p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="flex items-center">
-                                <input type="checkbox" id="remember_me" name="remember_me" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-                                <label for="remember_me" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Remember my key</label>
+
+                            <!-- Add New Key Section -->
+                            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                                <h4 class="text-lg font-semibold mb-3" data-i18n="addNewKeyTitle">Add a New Key</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label for="new-key-name"
+                                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                                            data-i18n="newKeyNameLabel">Key Name (e.g., "Personal", "Work")</label>
+                                        <input type="text" id="new-key-name"
+                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700"
+                                            placeholder="My Gemini Key">
+                                    </div>
+                                    <div>
+                                        <label for="new-key-value"
+                                            class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                                            data-i18n="newKeyValueLabel">API Key Value</label>
+                                        <div class="relative">
+                                            <input type="password" id="new-key-value"
+                                                class="w-full ps-4 pe-12 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700"
+                                                placeholder="Enter the API key string">
+                                            <button type="button"
+                                                class="absolute inset-y-0 end-0 pe-4 flex items-center text-gray-500 hover:text-gray-700"
+                                                id="togglePasswordBtn" aria-label="Toggle API key visibility"><i
+                                                    class="fas fa-eye"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="button" id="add-key-btn"
+                                            class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors">
+                                            <i class="fas fa-plus me-2"></i><span data-i18n="addKeyBtn">Add Key</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
+
                             <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                                <p class="text-sm text-blue-800 dark:text-blue-200">
-                                    <i class="fas fa-info-circle mr-1"></i>
-                                    Get your free key from <a href='https://aistudio.google.com/app/apikey' target='_blank' class="font-medium underline hover:text-blue-600">Google AI Studio</a>.
+                                <p class="text-sm text-blue-800 dark:text-blue-200" data-i18n-html="getApiKeyLink">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Get your free key from <a href='https://aistudio.google.com/app/apikey'
+                                        target='_blank' class="font-medium underline hover:text-blue-600">Google AI
+                                        Studio</a>.
                                 </p>
                             </div>
                         </div>
-                        <div class="mt-8 text-right">
-                            <button type="button" id="next-to-step-2" class="px-6 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed">
-                                <span class="next-btn-text">Next</span> <i class="fas fa-arrow-right ml-2"></i>
+
+                        <div class="mt-8 text-end">
+                            <button type="button" id="next-to-step-2"
+                                class="px-6 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                <span class="next-btn-text" data-i18n="next">Next</span> <i
+                                    class="fas fa-arrow-right ms-2 next-btn-icon"></i>
                             </button>
                         </div>
                     </section>
 
                     <!-- Step 2: Input Method -->
                     <section id="step-2" data-step class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
-                        <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fas fa-upload mr-3 text-primary-600"></i><span>Step 2: Add Your Subtitle Content</span></h3>
+                        <h3 class="text-xl font-bold mb-4 flex items-center"><i
+                                class="fas fa-upload me-3 text-primary-600"></i><span data-i18n="step2Title">Step 2: Add
+                                Your Subtitle Content</span></h3>
                         <div class="flex justify-center mb-6">
                             <div class="inline-flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1 space-x-1">
-                               <button type="button" id="select-file-input" class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md shadow">File Upload</button>
-                               <button type="button" id="select-text-input" class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md">Paste Text</button>
+                                <button type="button" id="select-file-input"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md shadow"
+                                    data-i18n="fileUpload">File Upload</button>
+                                <button type="button" id="select-text-input"
+                                    class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 rounded-md"
+                                    data-i18n="pasteText">Paste Text</button>
                             </div>
                         </div>
 
                         <div id="file-input-container">
-                            <div id="dropzone-upload" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-primary-400 transition-colors cursor-pointer bg-gray-50 dark:bg-gray-700/50">
+                            <div id="dropzone-upload"
+                                class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center hover:border-primary-400 transition-colors cursor-pointer bg-gray-50 dark:bg-gray-700/50">
                                 <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
-                                <p class="text-lg font-medium">Drag & drop SRT, VTT, SSA, or ASS file</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">or</p>
-                                <div id="choose-file-btn" class="inline-block px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer">Choose File</div>
+                                <p class="text-lg font-medium" data-i18n="dropzone">Drag & drop SRT, VTT, SSA, or ASS
+                                    file</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4" data-i18n="dropzoneOr">or</p>
+                                <div id="choose-file-btn"
+                                    class="inline-block px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer"
+                                    data-i18n="dropzoneChoose">Choose File</div>
                             </div>
                             <div id="file-feedback" class="mt-4 text-center" style="display: none;">
-                                <p class="text-green-600 dark:text-green-400 font-medium"><i class="fas fa-check-circle mr-2"></i><span><span>File selected:</span> </span><span id="file-name" class="font-bold"></span></p>
-                                <button type="button" id="remove-file" class="text-sm text-red-500 hover:underline ml-4"><i class="fas fa-times-circle mr-1"></i><span>Remove</span></button>
+                                <p class="text-green-600 dark:text-green-400 font-medium"><i
+                                        class="fas fa-check-circle me-2"></i><span data-i18n="fileSelected">File
+                                        selected:</span> <span id="file-name" class="font-bold"></span></p>
+                                <button type="button" id="remove-file"
+                                    class="text-sm text-red-500 hover:underline ms-4"><i
+                                        class="fas fa-times-circle me-1"></i><span
+                                        data-i18n="remove">Remove</span></button>
                             </div>
                         </div>
 
                         <div id="text-input-container" style="display: none;">
-                            <textarea id="srt_text" name="srt_text" rows="8" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-primary-500" placeholder="Paste your SRT content here..."></textarea>
-                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Note: Only SRT format is supported for text input.</p>
+                            <textarea id="srt_text" name="srt_text" rows="8"
+                                class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-primary-500"
+                                data-i18n-placeholder="pastePlaceholder"></textarea>
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400" data-i18n="pasteNote">Note: Only
+                                SRT format is supported for text input.</p>
                         </div>
-                        
+
                         <div class="mt-8 flex justify-between items-center">
-                            <button type="button" id="back-to-step-1" class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 transition-all">
-                                <i class="fas fa-arrow-left mr-2"></i> <span class="back-btn-text">Back</span>
+                            <button type="button" id="back-to-step-1"
+                                class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 transition-all">
+                                <i class="fas fa-arrow-left me-2 back-btn-icon"></i> <span class="back-btn-text"
+                                    data-i18n="back">Back</span>
                             </button>
-                            <button type="button" id="next-to-step-3" class="px-6 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed">
-                                <span class="next-btn-text">Next</span> <i class="fas fa-arrow-right ml-2"></i>
+                            <button type="button" id="next-to-step-3"
+                                class="px-6 py-2 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed">
+                                <span class="next-btn-text" data-i18n="next">Next</span> <i
+                                    class="fas fa-arrow-right ms-2 next-btn-icon"></i>
                             </button>
                         </div>
                     </section>
 
                     <!-- Step 3: Settings & Translate -->
                     <section id="step-3" data-step class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
-                        <h3 class="text-xl font-bold mb-6 flex items-center"><i class="fas fa-cogs mr-3 text-primary-600"></i><span>Step 3: Finalize and Translate</span></h3>
-                        
+                        <h3 class="text-xl font-bold mb-6 flex items-center"><i
+                                class="fas fa-cogs me-3 text-primary-600"></i><span data-i18n="step3Title">Step 3:
+                                Finalize and Translate</span></h3>
+
                         <div class="space-y-6">
                             <div>
-                                <label for="lang-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Target Language</label>
-                                <input type="text" id="lang-input" name="lang" value="Persian (Farsi)" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-primary-500" placeholder="e.g., Spanish, French, Japanese" required>
+                                <label for="lang-input"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                    data-i18n="targetLangLabel">Target Language</label>
+                                <input type="text" id="lang-input" name="lang" value="Persian (Farsi)"
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-primary-500"
+                                    data-i18n-placeholder="targetLangPlaceholder" required>
                             </div>
 
                             <details class="bg-gray-50 dark:bg-gray-900/50 rounded-lg border dark:border-gray-700">
                                 <summary class="p-4 cursor-pointer flex justify-between items-center">
-                                    <h4 class="text-md font-semibold flex items-center"><i class="fas fa-tools mr-2 text-gray-500"></i><span>Advanced Settings</span></h4>
+                                    <h4 class="text-md font-semibold flex items-center"><i
+                                            class="fas fa-tools me-2 text-gray-500"></i><span
+                                            data-i18n="advancedSettings">Advanced Settings</span></h4>
                                     <i class="fas fa-chevron-down text-gray-500 details-arrow"></i>
                                 </summary>
                                 <div class="px-4 pb-4 border-t dark:border-gray-700">
                                     <div class="pt-4 space-y-6">
-                                        <div class="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                                        <div
+                                            class="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
                                             <div class="flex items-start">
-                                                <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 mr-2"></i>
-                                                <p class="text-sm text-amber-800 dark:text-amber-200">Adjusting these settings can affect performance, cost, and quality. Proceed with caution.</p>
+                                                <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5 me-2"></i>
+                                                <p class="text-sm text-amber-800 dark:text-amber-200"
+                                                    data-i18n="advancedWarning">Adjusting these settings can affect
+                                                    performance, cost, and quality. Proceed with caution.</p>
                                             </div>
                                         </div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
-                                                <label for="model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">AI Model</label>
-                                                <select id="model" name="model" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                                                <label for="model"
+                                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                                    data-i18n="modelLabel">AI Model</label>
+                                                <select id="model" name="model"
+                                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
                                                     <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
                                                     <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                                                     <option value="gemini-2.0-flash" selected>Gemini 2.0 Flash</option>
@@ -220,83 +409,197 @@
                                                 </select>
                                             </div>
                                             <div>
-                                                <label for="temperature" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Temperature <span class="text-gray-400 text-xs">(creativity)</span></label>
-                                                <input type="number" id="temperature" name="temperature" min="0" max="2" step="0.1" value="0.7" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                                                <label for="temperature"
+                                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                                    data-i18n="temperatureLabel">Temperature</label>
+                                                <input type="number" id="temperature" name="temperature" min="0" max="2"
+                                                    step="0.1" value="0.7"
+                                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
                                             </div>
                                         </div>
 
-                                        <!-- Chunking Strategy Section -->
                                         <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Chunking Strategy</label>
+                                            <label
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3"
+                                                data-i18n="chunkStrategyLabel">Chunking Strategy</label>
                                             <div class="flex flex-col sm:flex-row gap-4">
                                                 <div class="flex items-center">
-                                                    <input id="chunk_default" type="radio" name="chunk_strategy" value="default" checked class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
-                                                    <label for="chunk_default" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Default (20 Chunks)</label>
+                                                    <input id="chunk_default" type="radio" name="chunk_strategy"
+                                                        value="default" checked
+                                                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
+                                                    <label for="chunk_default"
+                                                        class="ms-2 text-sm text-gray-700 dark:text-gray-300"
+                                                        data-i18n="chunkStrategyDefault">Default</label>
                                                 </div>
                                                 <div class="flex items-center">
-                                                    <input id="chunk_auto" type="radio" name="chunk_strategy" value="auto" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
-                                                    <label for="chunk_auto" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Automatic</label>
+                                                    <input id="chunk_auto" type="radio" name="chunk_strategy"
+                                                        value="auto"
+                                                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
+                                                    <label for="chunk_auto"
+                                                        class="ms-2 text-sm text-gray-700 dark:text-gray-300"
+                                                        data-i18n="chunkStrategyAuto">Automatic</label>
                                                 </div>
                                                 <div class="flex items-center">
-                                                    <input id="chunk_manual" type="radio" name="chunk_strategy" value="manual" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
-                                                    <label for="chunk_manual" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Manual</label>
+                                                    <input id="chunk_manual" type="radio" name="chunk_strategy"
+                                                        value="manual"
+                                                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300">
+                                                    <label for="chunk_manual"
+                                                        class="ms-2 text-sm text-gray-700 dark:text-gray-300"
+                                                        data-i18n="chunkStrategyManual">Manual</label>
                                                 </div>
                                             </div>
                                             <div id="manual_chunk_container" class="mt-4" style="display: none;">
-                                                <label for="chunk_count_manual" class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Number of Chunks</label>
-                                                <input type="number" id="chunk_count_manual" value="20" min="1" max="100" class="w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                                                <label for="chunk_count_manual"
+                                                    class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                                                    data-i18n="chunkCountManualLabel">Number of Chunks</label>
+                                                <input type="number" id="chunk_count_manual" value="20" min="1"
+                                                    max="100"
+                                                    class="w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
                                             </div>
                                         </div>
 
-                                        <!-- Request Delay Section -->
                                         <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                                             <div>
-                                                <label for="request-delay" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Request Delay (ms)</label>
-                                                <input type="number" id="request-delay" value="4000" min="1000" step="500" class="w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
-                                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Delay between each API request (e.g., 4000 for 15 RPM free tier).</p>
+                                                <label for="request-delay"
+                                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                                    data-i18n="requestDelayLabel">Request Delay (ms)</label>
+                                                <input type="number" id="request-delay" value="4000" min="1000"
+                                                    step="500"
+                                                    class="w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                                    data-i18n="requestDelayNote">Delay between each API request (e.g.,
+                                                    4000 for 15 RPM free tier).</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                                            <h4 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3"
+                                                data-i18n="promptSettingsTitle">Prompt & Separator Settings</h4>
+                                            <div class="space-y-4">
+                                                <div>
+                                                    <label for="separator-input"
+                                                        class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                                                        data-i18n="customSeparatorLabel">Text Separator</label>
+                                                    <input type="text" id="separator-input" value="\n\n---\n\n"
+                                                        class="w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 font-mono text-sm">
+                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                                        data-i18n="customSeparatorNote">The string used to separate text
+                                                        lines. Use \n for newlines.</p>
+                                                </div>
+                                                <div>
+                                                    <label for="tone-input"
+                                                        class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                                                        data-i18n="translationToneLabel">Translation Tone</label>
+                                                    <input type="text" id="tone-input" value="natural, conversational"
+                                                        class="w-full max-w-xs px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 text-sm">
+                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                                        data-i18n="translationToneNote">e.g., formal, informal,
+                                                        humorous, dramatic.</p>
+                                                </div>
+                                                <div>
+                                                    <label for="prompt-template-input"
+                                                        class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                                                        data-i18n="customPromptLabel">Translation Prompt
+                                                        Template</label>
+                                                    <textarea id="prompt-template-input" rows="8"
+                                                        class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 font-mono text-sm">Translate the following subtitle text inside <> into {LANG}.
+
+Instructions:
+- Maintain the original meaning.
+- Adopt a {TONE} tone.
+- Ensure the translation flows naturally for conversation.
+- Keep the translated text length appropriate for subtitles.
+- Respond with the EXACT same line count as the original text. 
+- Respond ONLY with the translated text lines, separated by "---".
+
+<
+{TEXT}
+></textarea>
+                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                                        data-i18n="customPromptNote">Use {LANG}, {TONE}, and {TEXT} as
+                                                        placeholders.</p>
+                                                </div>
+                                                <div>
+                                                    <div class="flex items-center">
+                                                        <input type="checkbox" id="no-censor-checkbox"
+                                                            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                                                        <label for="no-censor-checkbox"
+                                                            class="ms-2 text-sm text-gray-700 dark:text-gray-300"
+                                                            data-i18n="noCensorLabel">Add "uncensored" directive</label>
+                                                    </div>
+                                                    <p class="mt-1 ms-6 text-xs text-gray-500 dark:text-gray-400"
+                                                        data-i18n="noCensorNote">Appends a request to the prompt to not
+                                                        censor explicit content.</p>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                                             <div class="flex items-center">
-                                                <input type="checkbox" id="useProxyCheckbox" name="useProxyCheckbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
-                                                <label for="useProxyCheckbox" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Use Proxy (For users in sanctioned regions)</label>
+                                                <input type="checkbox" id="useProxyCheckbox" name="useProxyCheckbox"
+                                                    class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                                                <label for="useProxyCheckbox"
+                                                    class="ms-2 text-sm text-gray-700 dark:text-gray-300"
+                                                    data-i18n="useProxyLabel">Use Proxy</label>
+                                            </div>
+                                            <!-- Custom Proxy Input -->
+                                            <div id="custom-proxy-container" class="mt-4" style="display: none;">
+                                                <label for="custom-proxy-input"
+                                                    class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
+                                                    data-i18n="customProxyLabel">Custom Proxy URL (Optional)</label>
+                                                <input type="text" id="custom-proxy-input"
+                                                    class="w-full max-w-md px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700"
+                                                    placeholder="https://my-worker.example.com"
+                                                    value="https://middleman.yebekhe.workers.dev">
+                                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+                                                    data-i18n-html="customProxyNote">
+                                                    Deploy your own proxy using <a
+                                                        href="https://github.com/yebekhe/middleman" target="_blank"
+                                                        class="underline hover:text-primary-400">Middleman</a>.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </details>
                         </div>
-                        
+
                         <div class="mt-8 flex justify-between items-center">
-                            <button type="button" id="back-to-step-2" class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 transition-all">
-                                <i class="fas fa-arrow-left mr-2"></i> <span class="back-btn-text">Back</span>
+                            <button type="button" id="back-to-step-2"
+                                class="px-6 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300 transition-all">
+                                <i class="fas fa-arrow-left me-2 back-btn-icon"></i> <span class="back-btn-text"
+                                    data-i18n="back">Back</span>
                             </button>
-                            <button id="submit-button" type="submit" class="px-8 py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-primary-500/50">
-                                <span class="button-text">Translate Now</span>
+                            <button id="submit-button" type="submit"
+                                class="px-8 py-3 bg-gradient-to-r from-primary-600 to-accent-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-primary-500/50">
+                                <span class="button-text" data-i18n="translateNow">Translate Now</span>
                             </button>
                         </div>
                     </section>
                 </form>
             </div>
-            
-            <!-- Progress & Results Area -->
+
+            <!-- Results Area -->
             <div id="results-area" class="mt-8 animate-slide-up" style="display: none;">
                 <!-- Progress Display -->
                 <div id="progress-container" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                     <h3 class="text-lg font-semibold mb-4 flex items-center justify-between">
                         <span class="flex items-center">
-                            <i class="fas fa-tasks mr-2 text-primary-600 animate-pulse-slow"></i>
+                            <i class="fas fa-tasks me-2 text-primary-600 animate-pulse-slow"></i>
                             <span data-i18n="progressTitle">Translation in Progress...</span>
                         </span>
-                        <i id="toggle-log-btn" class="fas fa-info-circle text-gray-500 hover:text-primary-400 cursor-pointer" title="Show/Hide Log"></i>
+                        <i id="toggle-log-btn"
+                            class="fas fa-info-circle text-gray-500 hover:text-primary-400 cursor-pointer"
+                            title="Show/Hide Log"></i>
                     </h3>
                     <div class="flex justify-between text-sm mb-1">
                         <span id="progress-text">0% Complete</span>
                         <span id="time-estimate">Estimating...</span>
                     </div>
                     <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3.5">
-                        <div id="progress" class="progress-fill bg-gradient-to-r from-primary-500 to-accent-500 h-full rounded-full" style="width: 0%"></div>
+                        <div id="progress"
+                            class="progress-fill bg-gradient-to-r from-primary-500 to-accent-500 h-full rounded-full"
+                            style="width: 0%"></div>
                     </div>
                     <div id="chunk-status" class="text-sm text-gray-600 dark:text-gray-400 mt-2">Initializing...</div>
                 </div>
@@ -307,7 +610,7 @@
                         <div class="flex-shrink-0">
                             <i class="fas fa-exclamation-circle text-xl"></i>
                         </div>
-                        <div class="ml-3">
+                        <div class="ms-3">
                             <h3 class="text-md font-bold">An Error Occurred</h3>
                             <div id="error-content" class="text-sm mt-2"></div>
                         </div>
@@ -315,20 +618,28 @@
                 </div>
 
                 <!-- Side-by-Side Editor Container -->
-                <div id="editor-container" class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg" style="display: none;">
+                <div id="editor-container" class="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg"
+                    style="display: none;">
                     <!-- Editor Header -->
-                    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div
+                        class="p-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200">
-                            <i class="fas fa-edit mr-2 text-primary-500"></i>
+                            <i class="fas fa-edit me-2 text-primary-500"></i>
                             <span data-i18n="editTitle">Edit Your Translation</span>
                         </h3>
-                        <div class="flex items-center gap-3">
-                            <button id="download-edited-btn" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-all">
-                                <i class="fas fa-download mr-2"></i>
+                        <div class="flex items-center flex-wrap justify-center gap-3">
+                            <button id="find-replace-btn"
+                                class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all">
+                                <i class="fas fa-search me-2"></i> <span data-i18n="findReplace">Find/Replace</span>
+                            </button>
+                            <button id="download-edited-btn"
+                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-all">
+                                <i class="fas fa-download me-2"></i>
                                 <span data-i18n="downloadFile">Download File</span>
                             </button>
-                            <button id="start-new-from-editor-btn" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all">
-                                <i class="fas fa-plus-circle mr-2"></i>
+                            <button id="start-new-from-editor-btn"
+                                class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-all">
+                                <i class="fas fa-plus-circle me-2"></i>
                                 <span data-i18n="startNew">Start New</span>
                             </button>
                         </div>
@@ -336,11 +647,15 @@
                     <!-- Editor Table -->
                     <div class="overflow-x-auto max-h-[60vh] overflow-y-auto">
                         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
+                            <thead
+                                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
                                 <tr>
-                                    <th scope="col" class="px-4 py-3 w-12 text-center">#</th>
-                                    <th scope="col" class="px-6 py-3">Original Text</th>
-                                    <th scope="col" class="px-6 py-3">Translated Text (Editable)</th>
+                                    <th scope="col" class="px-4 py-3 w-12 text-center" data-i18n="tableHeaderId">#</th>
+                                    <th scope="col" class="px-6 py-3" data-i18n="tableHeaderOriginal">Original Text</th>
+                                    <th scope="col" class="px-6 py-3" data-i18n="tableHeaderTranslated">Translated Text
+                                        (Editable)</th>
+                                    <th scope="col" class="px-4 py-3 w-16 text-center" data-i18n="tableHeaderAction">
+                                        Action</th>
                                 </tr>
                             </thead>
                             <tbody id="editor-tbody">
@@ -349,20 +664,24 @@
                         </table>
                     </div>
                 </div>
-                
+
                 <!-- Log Viewer -->
-                <div id="log-viewer-container" class="mt-6 bg-gray-900/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-700" style="display: none;">
+                <div id="log-viewer-container"
+                    class="mt-6 bg-gray-900/80 backdrop-blur-sm rounded-xl shadow-lg border border-gray-700"
+                    style="display: none;">
                     <div class="p-4 border-b border-gray-700 flex justify-between items-center">
                         <h3 class="text-lg font-bold text-gray-200">
-                            <i class="fas fa-terminal mr-2 text-green-400"></i>
-                            Live Log
+                            <i class="fas fa-terminal me-2 text-green-400"></i>
+                            <span data-i18n="logTitle">Live Log</span>
                         </h3>
                         <div class="flex items-center gap-3">
-                             <button id="copy-log-btn" title="Copy Log" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-all text-xs">
-                                <i class="fas fa-copy mr-1"></i> Copy
+                            <button id="copy-log-btn" title="Copy Log"
+                                class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-all text-xs">
+                                <i class="fas fa-copy me-1"></i> <span data-i18n="logCopy">Copy</span>
                             </button>
-                            <button id="clear-log-btn" title="Clear Log" class="px-3 py-1 bg-red-800/50 hover:bg-red-800/80 text-red-300 font-semibold rounded-lg transition-all text-xs">
-                                <i class="fas fa-trash-alt mr-1"></i> Clear
+                            <button id="clear-log-btn" title="Clear Log"
+                                class="px-3 py-1 bg-red-800/50 hover:bg-red-800/80 text-red-300 font-semibold rounded-lg transition-all text-xs">
+                                <i class="fas fa-trash-alt me-1"></i> <span data-i18n="logClear">Clear</span>
                             </button>
                         </div>
                     </div>
@@ -375,57 +694,142 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 mt-12">
+        <footer
+            class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 mt-12">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div class="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
-                        Created with <i class="fas fa-heart text-red-500 mx-1"></i> by 
-                        <a href="https://x.com/yebekhe" target="_blank" rel="noopener noreferrer" class="font-medium text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300">
-                            yebekhe
-                        </a>
+                <div class="flex flex-col md:flex-row justify-between items-center text-center gap-4">
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-i18n-html="footerText">
+                        Created with <i class="fas fa-heart text-red-500 mx-1"></i> by YEBEKHE
                     </p>
+                    <div class="flex items-center space-x-4">
+                        <a href="https://github.com/itsyebekhe/subtitle-translate" target="_blank"
+                            rel="noopener noreferrer" title="GitHub Repository"
+                            class="text-gray-400 hover:text-gray-200 transition-colors">
+                            <i class="fab fa-github fa-lg"></i>
+                        </a>
+                        <a href="https://x.com/yebekhe" target="_blank" rel="noopener noreferrer" title="X (Twitter)"
+                            class="text-gray-400 hover:text-gray-200 transition-colors">
+                            <i class="fab fa-x-twitter fa-lg"></i>
+                        </a>
+                        <a href="https://t.me/yebekhe" target="_blank" rel="noopener noreferrer" title="Telegram"
+                            class="text-gray-400 hover:text-gray-200 transition-colors">
+                            <i class="fab fa-telegram fa-lg"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </footer>
     </div>
 
     <!-- Model Switch Modal -->
-    <div id="model-switch-modal" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;">
-        <div id="model-switch-dialog" class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-lg w-full transform transition-all opacity-0 scale-95">
+    <div id="model-switch-modal"
+        class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4"
+        style="display: none;">
+        <div id="model-switch-dialog"
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-lg w-full transform transition-all opacity-0 scale-95">
             <div class="p-6">
                 <div class="flex items-start">
-                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 sm:mx-0 sm:h-10 sm:w-10">
+                    <div
+                        class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 sm:mx-0 sm:h-10 sm:w-10">
                         <i class="fas fa-exclamation-triangle text-2xl text-yellow-500"></i>
                     </div>
-                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-bold text-gray-900 dark:text-gray-100" id="modal-title">Model Quota Reached</h3>
-                        <div class="mt-2">
+                    <div class="mt-3 text-center sm:mt-0 sm:ms-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-bold text-gray-900 dark:text-gray-100" id="modal-title"
+                            data-i18n="quotaModalTitle">Quota Reached</h3>
+                        <div class="mt-2 space-y-4">
                             <p class="text-sm text-gray-600 dark:text-gray-400" id="modal-message">
-                                You have reached your daily free tier request limit for the selected model. You can either wait until your quota resets, or switch to an alternative model to continue the translation.
+                                <!-- Content dynamically set by JS -->
                             </p>
+                            <div>
+                                <label for="modal-combo-select"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    data-i18n="quotaModalLabel">Switch to a different API Key / Model
+                                    combination:</label>
+                                <select id="modal-combo-select"
+                                    class="mt-1 block w-full ps-3 pe-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md dark:bg-gray-700">
+                                    <!-- Options will be populated by JS -->
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="bg-gray-50 dark:bg-gray-800/50 px-6 py-4">
                 <div class="flex flex-col sm:flex-row-reverse gap-3">
-                    <button type="button" id="modal-switch-btn" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto sm:text-sm">
-                        Switch Model and Continue
+                    <button type="button" id="modal-switch-btn"
+                        class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto sm:text-sm">
+                        <span data-i18n="switchAndContinueBtn">Switch and Continue</span>
                     </button>
-                    <button type="button" id="modal-cancel-btn" class="inline-flex justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
-                        Cancel Translation
+                    <button type="button" id="modal-cancel-btn"
+                        class="inline-flex justify-center w-full rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
+                        <span data-i18n="cancelTranslationBtn">Cancel Translation</span>
                     </button>
                 </div>
                 <div class="mt-4 text-center">
-                     <p class="text-xs text-gray-500 dark:text-gray-400">The translation will resume from where it left off.</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400" data-i18n="quotaModalNote">The translation will
+                        resume from where it left off.</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Find and Replace Modal -->
+    <div id="find-replace-modal"
+        class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4"
+        style="display: none;">
+        <div id="find-replace-dialog"
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full transform transition-all opacity-0 scale-95">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100" data-i18n="findReplaceTitle">Find and
+                        Replace</h3>
+                    <button id="find-replace-close-btn"
+                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="find-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            data-i18n="findLabel">Find</label>
+                        <input type="text" id="find-input"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                    </div>
+                    <div>
+                        <label for="replace-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                            data-i18n="replaceLabel">Replace with</label>
+                        <input type="text" id="replace-input"
+                            class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="case-sensitive-checkbox"
+                            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                        <label for="case-sensitive-checkbox" class="ms-2 text-sm text-gray-700 dark:text-gray-300"
+                            data-i18n="caseSensitiveLabel">Case sensitive</label>
+                    </div>
+                    <div id="find-replace-feedback" class="text-sm text-center text-gray-500 dark:text-gray-400 h-5">
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 flex justify-end gap-3">
+                <button type="button" id="find-next-btn"
+                    class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-300"
+                    data-i18n="findNextBtn">Find Next</button>
+                <button type="button" id="replace-btn"
+                    class="px-4 py-2 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700"
+                    data-i18n="replaceBtn">Replace</button>
+                <button type="button" id="replace-all-btn"
+                    class="px-4 py-2 bg-accent-600 text-white font-semibold rounded-lg hover:bg-accent-700"
+                    data-i18n="replaceAllBtn">Replace All</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Dropzone JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js"></script>
     <!-- Link to your custom JavaScript -->
     <script src="assets/script.js"></script>
 </body>
+
 </html>

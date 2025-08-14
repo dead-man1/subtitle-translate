@@ -10,15 +10,22 @@ const i18n = {
         'back': 'Back',
         'remove': 'Remove',
         // Step Navigator
+        'step1Indicator': 'Step 1',
         'step1Name': 'API Setup',
+        'step2Indicator': 'Step 2',
         'step2Name': 'Add Content',
+        'step3Indicator': 'Step 3',
         'step3Name': 'Translate',
         // Step 1: API
         'step1Title': 'Step 1: Configure Your API Key',
         'step1Description': 'This tool uses the Gemini API. Please provide your API key to proceed. Your key is stored locally in your browser and is never sent to our servers.',
-        'apiKeyLabel': 'Gemini API Key',
-        'apiKeyPlaceholder': 'Enter your Gemini API key',
-        'rememberKey': 'Remember my key',
+        'selectApiKeyLabel': 'Select an API Key',
+        'addNewKeyTitle': 'Add a New Key',
+        'newKeyNameLabel': 'Key Name (e.g., "Personal", "Work")',
+        'newKeyValueLabel': 'API Key Value',
+        'addKeyBtn': 'Add Key',
+        'deleteKeyBtn': 'Delete Key',
+        'noKeysAdded': 'No keys added yet. Add one below.',
         'getApiKeyLink': "Get your free key from <a href='https://aistudio.google.com/app/apikey' target='_blank' class='font-medium underline hover:text-blue-600'>Google AI Studio</a>.",
         // Step 2: Content
         'step2Title': 'Step 2: Add Your Subtitle Content',
@@ -30,13 +37,33 @@ const i18n = {
         'fileSelected': "File selected:",
         'pastePlaceholder': "Paste your SRT content here...",
         'pasteNote': "Note: Only SRT format is supported for text input.",
-        // Step 3: Translate
+        // Step 3: Translate & Advanced Settings
         'step3Title': 'Step 3: Finalize and Translate',
         'targetLangLabel': 'Target Language',
         'targetLangPlaceholder': 'e.g., Spanish, French, Japanese',
         'advancedSettings': 'Advanced Settings',
         'advancedWarning': 'Adjusting these settings can affect performance, cost, and quality. Proceed with caution.',
-        'useProxyLabel': 'Use Proxy (For users in sanctioned regions)',
+        'modelLabel': 'AI Model',
+        'temperatureLabel': 'Temperature',
+        'chunkStrategyLabel': 'Chunking Strategy',
+        'chunkStrategyDefault': 'Default',
+        'chunkStrategyAuto': 'Automatic',
+        'chunkStrategyManual': 'Manual',
+        'chunkCountManualLabel': 'Number of Chunks',
+        'requestDelayLabel': 'Request Delay (ms)',
+        'requestDelayNote': 'Delay between each API request (e.g., 4000 for 15 RPM free tier).',
+        'useProxyLabel': 'Use Proxy',
+        'customProxyLabel': 'Custom Proxy URL (Optional)',
+        'customProxyNote': 'Deploy your own proxy using <a href="https://github.com/yebekhe/middleman" target="_blank" class="underline hover:text-primary-400">Middleman</a>.',
+        'promptSettingsTitle': 'Prompt & Separator Settings',
+        'customSeparatorLabel': 'Text Separator',
+        'customSeparatorNote': 'The string used to separate text lines. Use \\n for newlines.',
+        'translationToneLabel': 'Translation Tone',
+        'translationToneNote': 'e.g., formal, informal, humorous, dramatic.',
+        'customPromptLabel': 'Translation Prompt Template',
+        'customPromptNote': 'Use {LANG}, {TONE}, and {TEXT} as placeholders.',
+        'noCensorLabel': 'Add "uncensored" directive',
+        'noCensorNote': 'Appends a request to the prompt to not censor explicit content.',
         'translateNow': 'Translate Now',
         // Results Area
         'progressTitle': 'Translation in Progress...',
@@ -53,9 +80,41 @@ const i18n = {
         'retryFailed': 'Retry Failed Chunks:',
         'retryButton': 'Retry Chunk',
         'retryingButton': 'Retrying...',
+        'findReplace': 'Find/Replace',
+        'tableHeaderId': '#',
+        'tableHeaderOriginal': 'Original Text',
+        'tableHeaderTranslated': 'Translated Text (Editable)',
+        'tableHeaderAction': 'Action',
+        'logTitle': 'Live Log',
+        'logCopy': 'Copy',
+        'logCopied': 'Copied!',
+        'logClear': 'Clear',
+        // Modals
+        'quotaModalTitle': 'Quota Reached',
+        'quotaModalLabel': 'Switch to a different API Key / Model combination:',
+        'quotaModalNote': 'The translation will resume from where it left off.',
+        'findReplaceTitle': 'Find and Replace',
+        'findLabel': 'Find',
+        'replaceLabel': 'Replace with',
+        'caseSensitiveLabel': 'Case sensitive',
+        'findNextBtn': 'Find Next',
+        'replaceBtn': 'Replace',
+        'replaceAllBtn': 'Replace All',
+        'switchAndContinueBtn': 'Switch and Continue',
+        'cancelTranslationBtn': 'Cancel Translation',
         // Alerts & Confirmations
         'clearMemoryConfirm': 'Are you sure you want to clear all saved translations from memory?',
         'clearMemorySuccess': 'Translation memory cleared!',
+        'deleteKeyConfirm': 'Are you sure you want to delete the key "{keyName}"?',
+        'errorRequired': 'Both key name and value are required.',
+        'errorKeyExists': 'This API key has already been added.',
+        'errorNoFile': 'Please select a subtitle file.',
+        'errorNoText': 'Please paste SRT content.',
+        'errorNoTranslatableText': 'No translatable text found. Original content loaded in editor.',
+        'errorTranslationFailed': 'A critical error occurred: {error}',
+        'errorFindText': 'Please enter text to find.',
+        'errorFindEnd': 'End of document reached.',
+        'footerText': 'Created with <i class="fas fa-heart text-red-500 mx-1"></i> by YEBEKHE',
     },
     fa: {
         // General
@@ -67,15 +126,22 @@ const i18n = {
         'back': 'قبلی',
         'remove': 'حذف',
         // Step Navigator
+        'step1Indicator': 'مرحله ۱',
         'step1Name': 'تنظیم API',
+        'step2Indicator': 'مرحله ۲',
         'step2Name': 'افزودن محتوا',
+        'step3Indicator': 'مرحله ۳',
         'step3Name': 'ترجمه',
         // Step 1: API
         'step1Title': 'مرحله ۱: کلید API خود را پیکربندی کنید',
         'step1Description': 'این ابزار از Gemini API استفاده می‌کند. لطفاً برای ادامه، کلید API خود را ارائه دهید. کلید شما به صورت محلی در مرورگرتان ذخیره می‌شود و هرگز به سرورهای ما ارسال نمی‌گردد.',
-        'apiKeyLabel': 'کلید API Gemini',
-        'apiKeyPlaceholder': 'کلید API خود را اینجا وارد کنید',
-        'rememberKey': 'کلید مرا به خاطر بسپار',
+        'selectApiKeyLabel': 'یک کلید API انتخاب کنید',
+        'addNewKeyTitle': 'افزودن کلید جدید',
+        'newKeyNameLabel': 'نام کلید (مثال: "شخصی"، "کاری")',
+        'newKeyValueLabel': 'مقدار کلید API',
+        'addKeyBtn': 'افزودن کلید',
+        'deleteKeyBtn': 'حذف کلید',
+        'noKeysAdded': 'هنوز کلیدی اضافه نشده است. یک کلید در پایین اضافه کنید.',
         'getApiKeyLink': "کلید رایگان خود را از <a href='https://aistudio.google.com/app/apikey' target='_blank' class='font-medium underline hover:text-blue-600'>Google AI Studio</a> دریافت کنید.",
         // Step 2: Content
         'step2Title': 'مرحله ۲: محتوای زیرنویس خود را اضافه کنید',
@@ -87,13 +153,33 @@ const i18n = {
         'fileSelected': "فایل انتخاب شد:",
         'pastePlaceholder': "محتوای SRT خود را اینجا بچسبانید...",
         'pasteNote': "توجه: برای چسباندن متن فقط از فرمت SRT پشتیبانی می‌شود.",
-        // Step 3: Translate
+        // Step 3: Translate & Advanced Settings
         'step3Title': 'مرحله ۳: نهایی‌سازی و ترجمه',
         'targetLangLabel': 'زبان مقصد',
         'targetLangPlaceholder': 'مثال: اسپانیایی، فرانسوی، ژاپنی',
         'advancedSettings': 'تنظیمات پیشرفته',
         'advancedWarning': 'تنظیم این پارامترها می‌تواند بر عملکرد، هزینه و کیفیت ترجمه تأثیر بگذارد. با احتیاط عمل کنید.',
-        'useProxyLabel': 'استفاده از پروکسی (برای کاربران در مناطق تحریم شده)',
+        'modelLabel': 'مدل هوش مصنوعی',
+        'temperatureLabel': 'دما (خلاقیت)',
+        'chunkStrategyLabel': 'استراتژی تقسیم‌بندی',
+        'chunkStrategyDefault': 'پیش‌فرض',
+        'chunkStrategyAuto': 'خودکار',
+        'chunkStrategyManual': 'دستی',
+        'chunkCountManualLabel': 'تعداد بخش‌ها',
+        'requestDelayLabel': 'تأخیر بین درخواست‌ها (ms)',
+        'requestDelayNote': 'تأخیر بین هر درخواست API (مثال: 4000 برای طرح رایگان 15 RPM).',
+        'useProxyLabel': 'استفاده از پروکسی',
+        'customProxyLabel': 'آدرس پروکسی سفارشی (اختیاری)',
+        'customProxyNote': 'پروکسی خود را با استفاده از <a href="https://github.com/yebekhe/middleman" target="_blank" class="underline hover:text-primary-400">Middleman</a> راه‌اندازی کنید.',
+        'promptSettingsTitle': 'تنظیمات پرامپت و جداکننده',
+        'customSeparatorLabel': 'جداکننده متن',
+        'customSeparatorNote': 'رشته‌ای که برای جدا کردن خطوط متن ارسالی به هوش مصنوعی استفاده می‌شود. از \\n برای خط جدید استفاده کنید.',
+        'translationToneLabel': 'لحن ترجمه',
+        'translationToneNote': 'مثال: رسمی، غیررسمی، طنزآمیز، دراماتیک.',
+        'customPromptLabel': 'قالب پرامپت ترجمه',
+        'customPromptNote': 'از {LANG}، {TONE} و {TEXT} به عنوان placeholder استفاده کنید.',
+        'noCensorLabel': 'افزودن دستور "بدون سانسور"',
+        'noCensorNote': 'درخواستی به پرامپت اضافه می‌کند تا محتوای صریح سانسور نشود.',
         'translateNow': 'شروع ترجمه',
         // Results Area
         'progressTitle': 'در حال ترجمه...',
@@ -108,11 +194,43 @@ const i18n = {
         'startNew': 'شروع ترجمه جدید',
         'downloadFile': 'دانلود فایل',
         'retryFailed': 'تلاش مجدد برای بخش‌های ناموفق:',
-        'retryButton': 'تلاش مجدد بخش',
+        'retryButton': 'تلاش مجدد',
         'retryingButton': 'در حال تلاش...',
+        'findReplace': 'یافتن/جایگزینی',
+        'tableHeaderId': '#',
+        'tableHeaderOriginal': 'متن اصلی',
+        'tableHeaderTranslated': 'متن ترجمه‌شده (قابل ویرایش)',
+        'tableHeaderAction': 'عملیات',
+        'logTitle': 'لاگ زنده',
+        'logCopy': 'کپی',
+        'logCopied': 'کپی شد!',
+        'logClear': 'پاک‌سازی',
+        // Modals
+        'quotaModalTitle': 'محدودیت استفاده',
+        'quotaModalLabel': 'به یک ترکیب کلید API / مدل دیگر تغییر دهید:',
+        'quotaModalNote': 'ترجمه از جایی که متوقف شده بود ادامه خواهد یافت.',
+        'findReplaceTitle': 'یافتن و جایگزینی',
+        'findLabel': 'یافتن',
+        'replaceLabel': 'جایگزینی با',
+        'caseSensitiveLabel': 'حساس به حروف بزرگ و کوچک',
+        'findNextBtn': 'بعدی را بیاب',
+        'replaceBtn': 'جایگزین کن',
+        'replaceAllBtn': 'جایگزینی همه',
+        'switchAndContinueBtn': 'تغییر و ادامه',
+        'cancelTranslationBtn': 'لغو ترجمه',
         // Alerts & Confirmations
         'clearMemoryConfirm': 'آیا مطمئن هستید که می‌خواهید تمام ترجمه‌های ذخیره شده در حافظه را پاک کنید؟',
         'clearMemorySuccess': 'حافظه ترجمه پاک شد!',
+        'deleteKeyConfirm': 'آیا از حذف کلید "{keyName}" مطمئن هستید؟',
+        'errorRequired': 'هر دو فیلد نام و مقدار کلید الزامی است.',
+        'errorKeyExists': 'این کلید API قبلاً اضافه شده است.',
+        'errorNoFile': 'لطفا یک فایل زیرنویس انتخاب کنید.',
+        'errorNoText': 'لطفا محتوای SRT را وارد کنید.',
+        'errorNoTranslatableText': 'هیچ متن قابل ترجمه‌ای یافت نشد. محتوای اصلی در ویرایشگر بارگذاری شد.',
+        'errorTranslationFailed': 'یک خطای اساسی رخ داد: {error}',
+        'errorFindText': 'لطفا متنی برای یافتن وارد کنید.',
+        'errorFindEnd': 'به انتهای سند رسیدید.',
+        'footerText': 'ساخته شده با <i class="fas fa-heart text-red-500 mx-1"></i> توسط YEBEKHE',
     }
 };
 
@@ -128,6 +246,7 @@ const AVAILABLE_MODELS = [
 let uiLang = 'en';
 let uploadedFile = null;
 let translationMemory = JSON.parse(localStorage.getItem('translationMemory') || '{}');
+let savedApiKeys = [];
 let currentStep = 1;
 let firstChunkTime = 0;
 let failedChunksData = [];
@@ -141,8 +260,17 @@ let currentRequestDelay = 4000;
 let currentTargetLangForRetry = '';
 const proxyUrl = 'https://middleman.yebekhe.workers.dev';
 
+// State for new features
+let findState = {
+    lastFoundRow: -1,
+    lastFoundPos: -1,
+    currentQuery: ''
+};
+// State for remembering user choices during a translation session
+let sessionOverrides = {};
+
 // --- DOM Element References ---
-let htmlElement, languageToggle, clearMemoryButton, translateForm, dropzoneElement, srtTextInput, apiKeyInput, rememberMeCheckbox, useProxyCheckbox, togglePasswordBtn, langInput, modelSelect, temperatureInput, progressContainer, progressBar, progressText, chunkStatusSpan, timeEstimateSpan, errorMessageDiv, submitButton;
+let htmlElement, languageToggle, clearMemoryButton, translateForm, dropzoneElement, srtTextInput, useProxyCheckbox, togglePasswordBtn, langInput, modelSelect, temperatureInput, progressContainer, progressBar, progressText, chunkStatusSpan, timeEstimateSpan, errorMessageDiv, submitButton;
 let stepSections, stepIndicators, formContainer, resultsArea;
 let nextToStep2Btn, nextToStep3Btn, backToStep1Btn, backToStep2Btns;
 let selectFileInputBtn, selectTextInputBtn, fileInputContainer, textInputContainer;
@@ -151,78 +279,56 @@ let myDropzone;
 let editorContainer, editorTbody, downloadEditedBtn, startNewFromEditorBtn;
 let logViewerContainer, logOutput, toggleLogBtn, copyLogBtn, clearLogBtn;
 let chunkStrategyRadios, manualChunkContainer, chunkCountManualInput, requestDelayInput;
-let modelSwitchModal, modelSwitchDialog, modalSwitchBtn, modalCancelBtn;
+let modelSwitchModal, modelSwitchDialog, modalSwitchBtn, modalCancelBtn, modalComboSelect;
+let separatorInput, promptTemplateInput, noCensorCheckbox, toneInput;
+let apiKeySelect, newKeyNameInput, newKeyValueInput, addKeyBtn, deleteKeyBtn;
+let customProxyContainer, customProxyInput;
+
+// DOM references for new features
+let findReplaceBtn, findReplaceModal, findReplaceDialog, findReplaceCloseBtn, findInput, replaceInput, caseSensitiveCheckbox, findNextBtn, replaceBtn, replaceAllBtn, findReplaceFeedback;
 
 
 // --- UI & WIZARD MANAGEMENT ---
 
 function updateLanguage(lang) {
     uiLang = lang;
+    localStorage.setItem('language', lang);
     const isRTL = lang === 'fa';
     const translations = i18n[uiLang];
     
     document.documentElement.lang = lang;
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 
-    const setText = (selector, key) => {
-        const element = document.querySelector(selector);
-        if (element) element.textContent = translations[key];
-    };
-    const setHtml = (selector, key) => {
-        const element = document.querySelector(selector);
-        if (element) element.innerHTML = translations[key];
-    };
-    const setPlaceholder = (selector, key) => {
-        const element = document.querySelector(selector);
-        if (element) element.placeholder = translations[key];
-    };
+    if (isRTL) {
+        document.body.classList.add('lang-fa');
+    } else {
+        document.body.classList.remove('lang-fa');
+    }
 
-    setText('#page-title', 'pageTitle');
-    setText('#page-title + p', 'pageSubtitle');
-    setText('#form-container h2', 'mainHeading');
-    setText('#upload-instructions', 'mainSubheading');
-
-    document.querySelectorAll('.next-btn-text').forEach(el => el.textContent = translations['next']);
-    document.querySelectorAll('.back-btn-text').forEach(el => el.textContent = translations['back']);
-    
-    setText('#step-1-indicator span:last-child', 'step1Name');
-    setText('#step-2-indicator span:last-child', 'step2Name');
-    setText('#step-3-indicator span:last-child', 'step3Name');
-    
-    setText('#step-1 h3 > span', 'step1Title');
-    setText('#step-1 .space-y-4 > p', 'step1Description');
-    setText('label[for="api_key"]', 'apiKeyLabel');
-    setPlaceholder('#api_key', 'apiKeyPlaceholder');
-    setText('label[for="remember_me"]', 'rememberKey');
-    setHtml('#step-1 .bg-blue-50 p', 'getApiKeyLink');
-
-    setText('#step-2 h3 > span', 'step2Title');
-    setText('#select-file-input', 'fileUpload');
-    setText('#select-text-input', 'pasteText');
-    setText('#dropzone-upload .text-lg', 'dropzone');
-    setText('#dropzone-upload .text-sm', 'dropzoneOr');
-    setText('#dropzone-upload #choose-file-btn', 'dropzoneChoose');
-    setText('#file-feedback p:first-child span:first-child', 'fileSelected');
-    setText('#remove-file span', 'remove');
-    setPlaceholder('#srt_text', 'pastePlaceholder');
-    setText('#text-input-container p', 'pasteNote');
-    
-    setText('#step-3 h3 > span', 'step3Title');
-    setText('label[for="lang-input"]', 'targetLangLabel');
-    setPlaceholder('#lang-input', 'targetLangPlaceholder');
-    setText('details summary h4 > span', 'advancedSettings');
-    setText('details .bg-amber-50 p', 'advancedWarning');
-    setText('label[for="useProxyCheckbox"]', 'useProxyLabel');
-    setText('#submit-button .button-text', 'translateNow');
-    
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (translations[key]) {
-            el.textContent = translations[key];
-        }
+        if (translations[key]) el.textContent = translations[key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translations[key]) el.placeholder = translations[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.getAttribute('data-i18n-html');
+        if (translations[key]) el.innerHTML = translations[key];
+    });
+    
+    // Handle dynamic elements and icons
+    document.querySelectorAll('.next-btn-icon').forEach(icon => {
+        icon.classList.toggle('fa-arrow-right', !isRTL);
+        icon.classList.toggle('fa-arrow-left', isRTL);
+    });
+    document.querySelectorAll('.back-btn-icon').forEach(icon => {
+        icon.classList.toggle('fa-arrow-left', !isRTL);
+        icon.classList.toggle('fa-arrow-right', isRTL);
     });
 
-    localStorage.setItem('language', lang);
+    loadApiKeys();
 }
 
 function goToStep(stepNumber) {
@@ -233,17 +339,25 @@ function goToStep(stepNumber) {
     stepIndicators.forEach((indicator, index) => {
         const step = index + 1;
         const textSpans = indicator.querySelectorAll('span');
-        indicator.className = 'group flex flex-col py-2 pl-4 md:border-l-0 md:border-t-4 md:pl-0 md:pt-4 md:pb-0';
+        indicator.className = 'group flex flex-col py-2 md:border-t-4 md:pt-4 md:pb-0'; // Base classes
+        
+        // Direction-aware classes
+        if (document.documentElement.dir === 'rtl') {
+            indicator.classList.add('border-e-4', 'pe-4', 'md:border-e-0', 'md:pe-0');
+        } else {
+            indicator.classList.add('border-s-4', 'ps-4', 'md:border-s-0', 'md:ps-0');
+        }
+        
         textSpans.forEach(span => span.className = 'text-sm font-medium');
 
         if (step < stepNumber) {
-            indicator.classList.add('border-l-4', 'md:border-t-4', 'border-green-500');
+            indicator.classList.add('border-green-500');
             textSpans.forEach(span => span.classList.add('text-green-600', 'dark:text-green-400'));
         } else if (step === stepNumber) {
-            indicator.classList.add('border-l-4', 'md:border-t-4', 'border-primary-600');
+            indicator.classList.add('border-primary-600');
             textSpans.forEach(span => span.classList.add('text-primary-600'));
         } else {
-            indicator.classList.add('border-l-4', 'md:border-t-4', 'border-gray-200', 'dark:border-gray-700');
+            indicator.classList.add('border-gray-200', 'dark:border-gray-700');
             textSpans.forEach(span => span.classList.add('text-gray-500', 'dark:text-gray-400'));
         }
     });
@@ -251,7 +365,7 @@ function goToStep(stepNumber) {
 }
 
 function checkStep1Completion() {
-    if (nextToStep2Btn) nextToStep2Btn.disabled = apiKeyInput.value.trim() === '';
+    if (nextToStep2Btn) nextToStep2Btn.disabled = !currentApiKey;
 }
 
 function checkStep2Completion() {
@@ -274,31 +388,14 @@ function resetWizard() {
 
 function togglePasswordVisibility() {
     const icon = togglePasswordBtn?.querySelector('i');
-    if (!icon || !apiKeyInput) return;
-    if (apiKeyInput.type === 'password') {
-        apiKeyInput.type = 'text';
+    if (!icon || !newKeyValueInput) return;
+    if (newKeyValueInput.type === 'password') {
+        newKeyValueInput.type = 'text';
         icon.classList.replace('fa-eye', 'fa-eye-slash');
     } else {
-        apiKeyInput.type = 'password';
+        newKeyValueInput.type = 'password';
         icon.classList.replace('fa-eye-slash', 'fa-eye');
     }
-}
-
-function saveApiKey() {
-    if (rememberMeCheckbox.checked && apiKeyInput.value) {
-        localStorage.setItem('savedApiKey', apiKeyInput.value);
-    } else {
-        localStorage.removeItem('savedApiKey');
-    }
-}
-
-function loadApiKey() {
-    const savedApiKey = localStorage.getItem('savedApiKey');
-    if (savedApiKey) {
-        apiKeyInput.value = savedApiKey;
-        rememberMeCheckbox.checked = true;
-    }
-    checkStep1Completion();
 }
 
 function showError(message, type = 'error') {
@@ -311,11 +408,12 @@ function showError(message, type = 'error') {
     }
     
     const isSuccess = type === 'success';
+    const isWarning = type === 'warn';
     titleEl.textContent = isSuccess ? i18n[uiLang].successTitle : i18n[uiLang].errorTitle;
-    iconEl.className = `fas text-xl ${isSuccess ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'}`;
-    errorMessageDiv.className = `mt-6 p-4 rounded-xl flex items-start border ${isSuccess ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700'}`;
-    titleEl.className = `text-md font-bold ${isSuccess ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'}`;
-    errorContentDiv.className = `text-sm mt-2 ${isSuccess ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`;
+    iconEl.className = `fas text-xl ${isSuccess ? 'fa-check-circle text-green-500' : isWarning ? 'fa-exclamation-triangle text-yellow-500' : 'fa-exclamation-circle text-red-500'}`;
+    errorMessageDiv.className = `mt-6 p-4 rounded-xl flex items-start border ${isSuccess ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : isWarning ? 'bg-yellow-50 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-700' : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700'}`;
+    titleEl.className = `text-md font-bold ${isSuccess ? 'text-green-800 dark:text-green-200' : isWarning ? 'text-yellow-800 dark:text-yellow-200' : 'text-red-800 dark:text-red-200'}`;
+    errorContentDiv.className = `text-sm mt-2 ${isSuccess ? 'text-green-700 dark:text-green-300' : isWarning ? 'text-yellow-700 dark:text-yellow-300' : 'text-red-700 dark:text-red-300'}`;
     
     errorContentDiv.textContent = message;
     errorMessageDiv.style.display = 'flex';
@@ -341,15 +439,13 @@ function resetUIForNewTranslation() {
     currentAllTranslatedEntries = [];
 }
 
-// Replace the existing updateProgress function with this one.
-
 function updateProgress(chunkIndex, totalChunks, startTime) {
     if (!progressContainer || progressContainer.style.display === 'none') return;
     const currentDisplayChunk = chunkIndex + 1;
     const progressPercentage = totalChunks > 0 ? Math.round((currentDisplayChunk / totalChunks) * 100) : 0;
     progressBar.style.width = `${progressPercentage}%`;
     progressText.textContent = `${progressPercentage}% ${i18n[uiLang].progressComplete}`;
-    chunkStatusSpan.textContent = `Processing chunk: ${currentDisplayChunk}/${totalChunks}`;
+    chunkStatusSpan.textContent = `${i18n[uiLang].processingChunk} ${currentDisplayChunk}/${totalChunks}`;
 
     if (startTime) {
         timeEstimateSpan.textContent = i18n[uiLang].progressCalculating;
@@ -361,7 +457,6 @@ function updateProgress(chunkIndex, totalChunks, startTime) {
             const seconds = Math.floor(estimatedRemainingTime % 60);
             timeEstimateSpan.textContent = `~${minutes}m ${seconds}s ${i18n[uiLang].progressRemaining}`;
         } else {
-            // This is the last chunk, or it's already done
             timeEstimateSpan.textContent = i18n[uiLang].progressComplete;
         }
     }
@@ -399,12 +494,39 @@ function logMessage(message, type = 'info') {
 // --- MODAL MANAGEMENT ---
 let resolveModalPromise = null;
 
-function showModelSwitchModal(failedModel, newModel) {
+function showModelSwitchModal(failedModel, failedApiKey) {
     return new Promise((resolve) => {
         resolveModalPromise = resolve;
 
         const modalMessage = modelSwitchModal.querySelector('#modal-message');
-        modalMessage.textContent = `You have reached your daily free tier request limit for the model "${failedModel}". You can either wait for your quota to reset, or switch to the alternative model "${newModel}" to continue the translation.`;
+        modalMessage.innerHTML = `You have reached your daily request limit for the model <strong>"${failedModel}"</strong> with the selected API key. Please choose a different combination to continue.`;
+
+        modalComboSelect.innerHTML = '';
+        let availableOptions = 0;
+
+        // Populate the combo dropdown with all valid Key/Model combinations
+        savedApiKeys.forEach(key => {
+            AVAILABLE_MODELS.forEach(model => {
+                // The only invalid combination is the one that just failed.
+                if (key.value === failedApiKey && model === failedModel) {
+                    return; // Skip this option
+                }
+
+                const option = document.createElement('option');
+                // The value stores both key and model, separated by a pipe
+                option.value = `${key.value}|${model}`;
+                option.textContent = `${key.name} (${model})`;
+                modalComboSelect.appendChild(option);
+                availableOptions++;
+            });
+        });
+        
+        if (availableOptions === 0) {
+            modalComboSelect.innerHTML = `<option value="">No other combinations available</option>`;
+            modalSwitchBtn.disabled = true;
+        } else {
+            modalSwitchBtn.disabled = false;
+        }
 
         modelSwitchModal.style.display = 'flex';
         setTimeout(() => {
@@ -424,6 +546,86 @@ function hideModal() {
             resolveModalPromise = null;
         }
     }, 200);
+}
+
+
+// --- API KEY MANAGEMENT ---
+function loadApiKeys() {
+    savedApiKeys = JSON.parse(localStorage.getItem('apiKeys') || '[]');
+    const lastSelectedKey = localStorage.getItem('selectedApiKey');
+    apiKeySelect.innerHTML = '';
+
+    if (savedApiKeys.length === 0) {
+        apiKeySelect.innerHTML = `<option value="">${i18n[uiLang].noKeysAdded}</option>`;
+        currentApiKey = '';
+    } else {
+        savedApiKeys.forEach(key => {
+            const option = document.createElement('option');
+            option.value = key.value;
+            option.textContent = key.name;
+            if (key.value === lastSelectedKey) {
+                option.selected = true;
+            }
+            apiKeySelect.appendChild(option);
+        });
+        if (!apiKeySelect.value && apiKeySelect.options.length > 0) {
+            apiKeySelect.options[0].selected = true;
+        }
+        currentApiKey = apiKeySelect.value;
+    }
+    deleteKeyBtn.disabled = savedApiKeys.length === 0;
+    checkStep1Completion();
+}
+
+function saveApiKeys() {
+    localStorage.setItem('apiKeys', JSON.stringify(savedApiKeys));
+}
+
+function handleAddKey() {
+    const name = newKeyNameInput.value.trim();
+    const value = newKeyValueInput.value.trim();
+
+    if (!name || !value) {
+        showError(i18n[uiLang].errorRequired);
+        return;
+    }
+    if (savedApiKeys.some(key => key.value === value)) {
+        showError(i18n[uiLang].errorKeyExists);
+        return;
+    }
+
+    savedApiKeys.push({ name, value });
+    saveApiKeys();
+    localStorage.setItem('selectedApiKey', value);
+    newKeyNameInput.value = '';
+    newKeyValueInput.value = '';
+    loadApiKeys();
+    hideError();
+}
+
+function handleDeleteKey() {
+    const selectedValue = apiKeySelect.value;
+    if (!selectedValue) return;
+
+    const keyToDelete = savedApiKeys.find(key => key.value === selectedValue);
+    const confirmMsg = i18n[uiLang].deleteKeyConfirm.replace('{keyName}', keyToDelete.name);
+
+    if (confirm(confirmMsg)) {
+        savedApiKeys = savedApiKeys.filter(key => key.value !== selectedValue);
+        saveApiKeys();
+        
+        if (localStorage.getItem('selectedApiKey') === selectedValue) {
+            localStorage.removeItem('selectedApiKey');
+        }
+        
+        loadApiKeys();
+    }
+}
+
+function handleSelectKey() {
+    currentApiKey = apiKeySelect.value;
+    localStorage.setItem('selectedApiKey', currentApiKey);
+    checkStep1Completion();
 }
 
 
@@ -600,13 +802,27 @@ function splitIntoChunks(array, chunkCount) {
 async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
     if (!chunk || chunk.length === 0) return [];
 
-    const separator = "\n---\n";
+    const separator = separatorInput.value.replace(/\\n/g, '\n');
+    const promptTemplate = promptTemplateInput.value;
+    const tone = toneInput.value.trim();
     const sourceTexts = chunk.map(entry => entry.text);
     const combinedText = sourceTexts.join(separator);
-    const effectivePrompt = `Translate the following subtitle text into ${targetLang}. Maintain the original meaning, natural conversational tone, and appropriate length for subtitles. Respond ONLY with the translated text lines, separated by "---".\n\n${combinedText}`;
+    
+    let effectivePrompt = promptTemplate
+        .replace('{LANG}', targetLang)
+        .replace('{TEXT}', combinedText)
+        .replace('{TONE}', tone);
+
+    if (noCensorCheckbox.checked) {
+        effectivePrompt += '\n\nIMPORTANT: Do not censor or alter any explicit words or profanity in the original text. Translate them directly and accurately.';
+    }
 
     const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    const targetUrl = useProxyCheckbox.checked ? proxyUrl : directUrl;
+    let targetUrl = directUrl;
+    if (useProxyCheckbox.checked) {
+        const customProxy = customProxyInput.value.trim();
+        targetUrl = customProxy || proxyUrl; // Use custom if provided, else default
+    }
     
     let finalPayload = {
         contents: [{ parts: [{ text: effectivePrompt }] }],
@@ -628,7 +844,7 @@ async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
                 const quotaFailure = errorData?.error?.details?.find(d => d["@type"]?.includes("QuotaFailure"));
                 
                 if (quotaFailure?.violations?.some(v => v.quotaId?.includes('FreeTier'))) {
-                    throw new Error(`QUOTA_EXHAUSTED ${model}`);
+                    throw new Error(`QUOTA_EXHAUSTED ${model} ${apiKey}`);
                 }
 
                 const retryInfo = errorData?.error?.details?.find(d => d["@type"]?.includes("RetryInfo"));
@@ -675,59 +891,31 @@ async function fetchTranslation(chunk, apiKey, targetLang, model, temperature) {
 
 async function translateChunkRecursively(chunk, apiKey, targetLang, model, temperature, requestDelay) {
     try {
-        if (chunk.length <= 1) {
-            return await fetchTranslation(chunk, apiKey, targetLang, model, temperature);
-        }
         return await fetchTranslation(chunk, apiKey, targetLang, model, temperature);
     } catch (error) {
         if (error.message.startsWith('RATE_LIMIT_HIT')) {
             const waitMs = parseInt(error.message.split(' ')[1], 10);
             await new Promise(resolve => setTimeout(resolve, waitMs));
             return translateChunkRecursively(chunk, apiKey, targetLang, model, temperature, requestDelay);
-        }
-        
-        if (error.message.startsWith('QUOTA_EXHAUSTED')) {
-            const failedModel = error.message.split(' ')[1];
-            logMessage(`Daily quota exhausted for model: ${failedModel}. Prompting user to switch.`, 'error');
+        } else if (error.message.startsWith('QUOTA_EXHAUSTED')) {
+            const [, failedModel, failedApiKey] = error.message.split(' ');
+            logMessage(`Daily quota exhausted for model: ${failedModel} with the selected API key.`, 'error');
             
-            const failedIndex = AVAILABLE_MODELS.indexOf(failedModel);
-            const nextIndex = (failedIndex + 1) % AVAILABLE_MODELS.length;
-            const newModel = AVAILABLE_MODELS[nextIndex];
+            const userResponse = await showModelSwitchModal(failedModel, failedApiKey);
+            
+            if (userResponse && userResponse.choice === 'switch') {
+                const { newModel, newApiKey } = userResponse;
+                
+                // Set the override for this session
+                const failureKey = `${failedApiKey}|${failedModel}`;
+                sessionOverrides[failureKey] = { newApiKey, newModel };
+                logMessage(`Override stored for session: ${failureKey} -> ${newApiKey}|${newModel}`, 'info');
 
-            const userChoice = await showModelSwitchModal(failedModel, newModel);
-            
-            if (userChoice === 'switch') {
-                logMessage(`User chose to switch. Retrying with new model: ${newModel}.`, 'info');
-                currentModel = newModel;
-                modelSelect.value = newModel;
-                return translateChunkRecursively(chunk, apiKey, targetLang, newModel, temperature, requestDelay);
+                return translateChunkRecursively(chunk, newApiKey, targetLang, newModel, temperature, requestDelay);
             } else {
                 logMessage('User cancelled translation due to quota exhaustion.', 'warn');
-                throw new Error('Translation cancelled by user.');
+                throw new Error('Translation cancelled by user due to model/key quota limit.');
             }
-        }
-        
-        if (error.message.includes('Line count mismatch')) {
-            logMessage(`Line count mismatch for chunk size ${chunk.length}. Processing sequentially.`, 'warn');
-            const midPoint = Math.ceil(chunk.length / 2);
-            const firstHalf = chunk.slice(0, midPoint);
-            const secondHalf = chunk.slice(midPoint);
-
-            // *** CRITICAL FIX: Process sub-chunks sequentially, not in parallel ***
-            const translatedChunks = [];
-            
-            // Process the first half
-            const translatedFirst = await translateChunkRecursively(firstHalf, apiKey, targetLang, model, temperature, requestDelay);
-            translatedChunks.push(...translatedFirst);
-
-            // Respect the user-defined delay before processing the second half
-            await new Promise(resolve => setTimeout(resolve, requestDelay));
-            
-            // Process the second half
-            const translatedSecond = await translateChunkRecursively(secondHalf, apiKey, targetLang, model, temperature, requestDelay);
-            translatedChunks.push(...translatedSecond);
-
-            return translatedChunks;
         } else {
             logMessage(`A non-recoverable error occurred during translation: ${error.message}`, 'error');
             throw error;
@@ -738,6 +926,18 @@ async function translateChunkRecursively(chunk, apiKey, targetLang, model, tempe
 async function translateChunk(chunk, apiKey, targetLang, model, temperature, requestDelay) {
     const textsToTranslate = [];
     const cachedResults = new Map();
+
+    // Check for session-level overrides before proceeding
+    const failureKey = `${apiKey}|${model}`;
+    const override = sessionOverrides[failureKey];
+    let effectiveApiKey = apiKey;
+    let effectiveModel = model;
+
+    if (override) {
+        logMessage(`Applying session override for ${failureKey}...`, 'warn');
+        effectiveApiKey = override.newApiKey;
+        effectiveModel = override.newModel;
+    }
 
     chunk.forEach((entry, index) => {
         const cached = findInTranslationMemory(entry.text, targetLang);
@@ -752,7 +952,7 @@ async function translateChunk(chunk, apiKey, targetLang, model, temperature, req
         return Array.from({ length: chunk.length }, (_, i) => cachedResults.get(i));
     }
 
-    const translatedTexts = await translateChunkRecursively(textsToTranslate, apiKey, targetLang, model, temperature);
+    const translatedTexts = await translateChunkRecursively(textsToTranslate, effectiveApiKey, targetLang, effectiveModel, temperature, requestDelay);
 
     translatedTexts.forEach((translatedText, i) => {
         const originalEntry = textsToTranslate[i];
@@ -774,10 +974,9 @@ async function translateChunk(chunk, apiKey, targetLang, model, temperature, req
     return finalTranslations;
 }
 
-// Replace the existing handleTranslate function with this one.
-
 async function handleTranslate(event) {
     event.preventDefault();
+    sessionOverrides = {}; // Reset session overrides at the start of a new translation
     formContainer.style.display = 'none';
     resultsArea.style.display = 'block';
     resetUIForNewTranslation();
@@ -786,7 +985,7 @@ async function handleTranslate(event) {
 
     const targetLanguage = langInput.value.trim();
 
-    currentApiKey = apiKeyInput.value.trim();
+    currentApiKey = apiKeySelect.value;
     currentModel = modelSelect.value;
     currentTemperature = parseFloat(temperatureInput.value);
     currentRequestDelay = parseInt(requestDelayInput.value, 10) || 4000;
@@ -796,12 +995,12 @@ async function handleTranslate(event) {
     const inputMethod = selectFileInputBtn.classList.contains('bg-primary-600') ? 'file' : 'text';
 
     if (inputMethod === 'file') {
-        if (!uploadedFile) { showError('Please select a subtitle file.'); resetWizard(); return; }
+        if (!uploadedFile) { showError(i18n[uiLang].errorNoFile); resetWizard(); return; }
         currentOriginalFormat = uploadedFile.name.split('.').pop()?.toLowerCase() || 'srt';
         currentOriginalFileName = uploadedFile.name.replace(/\.[^/.]+$/, "");
         subtitleContent = await uploadedFile.text();
     } else {
-        if (srtTextInput.value.trim() === '') { showError('Please paste SRT content.'); resetWizard(); return; }
+        if (srtTextInput.value.trim() === '') { showError(i18n[uiLang].errorNoText); resetWizard(); return; }
         currentOriginalFormat = 'srt';
         currentOriginalFileName = 'pasted_translation';
         subtitleContent = srtTextInput.value;
@@ -823,7 +1022,7 @@ async function handleTranslate(event) {
         if (translatableEntries.length === 0) {
             currentAllTranslatedEntries = allParsedEntries;
             populateEditor();
-            showError("No translatable text found. Original content loaded in editor.", 'success');
+            showError(i18n[uiLang].errorNoTranslatableText, 'success');
             logMessage('No translatable text found. Process finished.', 'success');
             return;
         }
@@ -859,11 +1058,9 @@ async function handleTranslate(event) {
                 const chunkStartTime = performance.now();
                 const translatedTexts = await translateChunk(chunks[i], currentApiKey, targetLanguage, currentModel, currentTemperature, currentRequestDelay);
                 
-                // *** THIS IS THE FIX ***
                 if (i === 0 && totalChunks > 1) {
                     firstChunkTime = (performance.now() - chunkStartTime) / 1000;
                     logMessage(`First chunk took ${firstChunkTime.toFixed(1)}s. Estimating remaining time.`, 'info');
-                    // Immediately update the progress bar with the new estimate
                     updateProgress(i, totalChunks, null);
                 }
                 
@@ -885,20 +1082,18 @@ async function handleTranslate(event) {
         
         if (failedChunksData.length > 0) {
             const msg = `Translation finished with ${failedChunksData.length} failed chunk(s). Edits can be made before downloading.`;
-            showError(msg);
+            showError(msg, 'warn');
             logMessage(msg, 'warn');
             displayRetryButtons();
         } else {
-            showError('Translation successful! You can review and edit the results below.', 'success');
+            showError(i18n[uiLang].successText, 'success');
             logMessage('Translation successful!', 'success');
         }
 
     } catch (error) {
         progressContainer.style.display = 'none';
         logMessage(`A critical error occurred: ${error.message}`, 'error');
-        showError(`A critical error occurred: ${error.message}`);
-    } finally {
-        saveApiKey();
+        showError(i18n[uiLang].errorTranslationFailed.replace('{error}', error.message));
     }
 }
 
@@ -907,25 +1102,54 @@ function autoResizeTextarea(textarea) {
     textarea.style.height = (textarea.scrollHeight) + 'px';
 }
 
+function isRtl(text) {
+    const rtlRegex = /[\u0600-\u06FF\u0590-\u05FF]/; // Arabic, Persian, Hebrew characters
+    return rtlRegex.test(text);
+}
+
+function isLanguageRtl(langName) {
+    const lowerLang = langName.toLowerCase();
+    const rtlKeywords = ['persian', 'farsi', 'arabic', 'hebrew', 'urdu', 'pashto', 'sindhi'];
+    return rtlKeywords.some(keyword => lowerLang.includes(keyword));
+}
+
 function populateEditor() {
     if (!editorTbody) return;
     editorTbody.innerHTML = '';
+    
+    const targetLanguage = langInput.value.trim();
+    const isTargetRtl = isLanguageRtl(targetLanguage);
+
+    // Set header alignment based on UI language
+    const headers = editorContainer.querySelectorAll('thead th');
+    headers.forEach(th => {
+        th.style.textAlign = (uiLang === 'fa') ? 'right' : 'left';
+    });
+    headers[0].style.textAlign = 'center'; // Keep '#' column centered
+    headers[headers.length-1].style.textAlign = 'center'; // Keep 'Action' column centered
 
     currentAllTranslatedEntries.forEach((entry, index) => {
         if (entry.otherData.lineType !== 'cue' && entry.otherData.lineType !== 'dialogue') return;
         
         const tr = document.createElement('tr');
-        tr.className = 'bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600';
+        tr.className = 'bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200';
         tr.dataset.index = index;
 
         const originalText = entry.text_original || entry.text;
         const translatedText = entry.text;
+        
+        const isOriginalRtl = isRtl(originalText);
 
         tr.innerHTML = `
             <td class="px-4 py-2 text-center font-medium text-gray-900 dark:text-white">${entry.id}</td>
-            <td class="px-6 py-2 whitespace-pre-wrap">${originalText}</td>
+            <td class="px-6 py-2 whitespace-pre-wrap" style="direction: ${isOriginalRtl ? 'rtl' : 'ltr'}; text-align: ${isOriginalRtl ? 'right' : 'left'};">${originalText}</td>
             <td class="px-6 py-2">
-                <textarea class="w-full p-1 bg-transparent border-0 rounded-md focus:ring-2 focus:ring-primary-500 overflow-hidden" rows="1">${translatedText}</textarea>
+                <textarea class="w-full p-1 bg-transparent border-0 rounded-md focus:ring-2 focus:ring-primary-500 overflow-hidden" style="direction: ${isTargetRtl ? 'rtl' : 'ltr'}; text-align: ${isTargetRtl ? 'right' : 'left'};" rows="1">${translatedText}</textarea>
+            </td>
+            <td class="px-4 py-2 text-center">
+                <button class="retranslate-btn text-gray-400 hover:text-primary-500 transition-colors" title="Retranslate this line">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
             </td>`;
         
         const textarea = tr.querySelector('textarea');
@@ -992,7 +1216,7 @@ function displayRetryButtons() {
 async function handleManualRetry(event) {
     const button = event.target;
     button.disabled = true;
-    button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${i18n[uiLang].retryingButton}`;
+    button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> ${i18n[uiLang].retryingButton}`;
     
     const internalChunkIndex = parseInt(button.dataset.chunkIndex, 10);
     const failedChunkInfo = failedChunksData.find(fc => fc.index === internalChunkIndex);
@@ -1020,6 +1244,183 @@ async function handleManualRetry(event) {
     }
 }
 
+
+// --- FEATURE FUNCTIONS ---
+
+// 1. Individual Line Retranslation
+async function handleIndividualRetranslate(button) { 
+    const icon = button.querySelector('i');
+    const tr = button.closest('tr');
+
+    if (!tr) {
+        console.error("Could not find parent row for retranslate button.");
+        return;
+    }
+
+    const entryIndex = parseInt(tr.dataset.index, 10);
+    const entryData = currentAllTranslatedEntries[entryIndex];
+    const originalText = entryData.text_original;
+
+    if (!originalText) {
+        showError("No original text found for this line.");
+        return;
+    }
+
+    // Set loading state
+    icon.classList.add('fa-spin');
+    button.disabled = true;
+
+    try {
+        const chunk = [{ text: originalText }]; // Create a chunk of one
+        const translatedLines = await translateChunkRecursively(chunk, currentApiKey, currentTargetLangForRetry, currentModel, currentTemperature, 0);
+
+        if (translatedLines && translatedLines.length > 0) {
+            const newText = translatedLines[0];
+            const textarea = tr.querySelector('textarea');
+            textarea.value = newText;
+            currentAllTranslatedEntries[entryIndex].text = newText;
+            updateTranslationMemory(originalText, newText, currentTargetLangForRetry);
+            autoResizeTextarea(textarea);
+            logMessage(`Successfully re-translated line #${entryData.id}.`, 'success');
+        } else {
+            throw new Error("API returned no translation.");
+        }
+    } catch (error) {
+        logMessage(`Failed to re-translate line #${entryData.id}: ${error.message}`, 'error');
+        showError(`Failed to re-translate line: ${error.message}`);
+    } finally {
+        // Revert loading state
+        icon.classList.remove('fa-spin');
+        button.disabled = false;
+    }
+}
+
+// 2. Find and Replace
+function showFindReplaceModal() {
+    findState = { lastFoundRow: -1, lastFoundPos: -1, currentQuery: '' }; // Reset state
+    findReplaceFeedback.textContent = '';
+    findReplaceModal.style.display = 'flex';
+    setTimeout(() => {
+        findReplaceDialog.classList.remove('opacity-0', 'scale-95');
+        findReplaceDialog.classList.add('opacity-100', 'scale-100');
+        findInput.focus();
+    }, 10);
+}
+
+function hideFindReplaceModal() {
+    findReplaceDialog.classList.remove('opacity-100', 'scale-100');
+    findReplaceDialog.classList.add('opacity-0', 'scale-95');
+    setTimeout(() => {
+        findReplaceModal.style.display = 'none';
+    }, 200);
+}
+
+function handleFindNext() {
+    const query = findInput.value;
+    if (!query) {
+        findReplaceFeedback.textContent = i18n[uiLang].errorFindText;
+        return;
+    }
+
+    // If query changed, reset search
+    if (query !== findState.currentQuery) {
+        findState = { lastFoundRow: -1, lastFoundPos: -1, currentQuery: query };
+    }
+
+    const rows = Array.from(editorTbody.querySelectorAll('tr[data-index]'));
+    const isCaseSensitive = caseSensitiveCheckbox.checked;
+
+    for (let i = 0; i < rows.length; i++) {
+        // Start from the beginning or the next row
+        let rowIndex = (findState.lastFoundRow + i) % rows.length;
+        // For the first iteration (i=0), start from the next position
+        if(i === 0 && findState.lastFoundRow !== -1) {
+            rowIndex = findState.lastFoundRow;
+        }
+
+        const row = rows[rowIndex];
+        const textarea = row.querySelector('textarea');
+        const text = textarea.value;
+        const searchFrom = (rowIndex === findState.lastFoundRow) ? findState.lastFoundPos + 1 : 0;
+        
+        const pos = isCaseSensitive ? text.indexOf(query, searchFrom) : text.toLowerCase().indexOf(query.toLowerCase(), searchFrom);
+
+        if (pos !== -1) {
+            findState.lastFoundRow = rowIndex;
+            findState.lastFoundPos = pos;
+            
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            textarea.focus();
+            textarea.setSelectionRange(pos, pos + query.length);
+            
+            findReplaceFeedback.textContent = '';
+            return;
+        }
+    }
+
+    findReplaceFeedback.textContent = i18n[uiLang].errorFindEnd;
+    findState = { lastFoundRow: -1, lastFoundPos: -1, currentQuery: query }; // Reset for next search
+}
+
+function handleReplace() {
+    const rows = Array.from(editorTbody.querySelectorAll('tr[data-index]'));
+    if (findState.lastFoundRow === -1 || !findInput.value) {
+        handleFindNext(); // If nothing is selected, find first
+        return;
+    }
+
+    const row = rows[findState.lastFoundRow];
+    if (!row) return;
+
+    const textarea = row.querySelector('textarea');
+    const query = findInput.value;
+    const replacement = replaceInput.value;
+    const selectionStart = textarea.selectionStart;
+    const selectionEnd = textarea.selectionEnd;
+
+    // Check if the current selection matches the find query
+    const selectedText = textarea.value.substring(selectionStart, selectionEnd);
+    const queryToCheck = caseSensitiveCheckbox.checked ? query : query.toLowerCase();
+    const selectedTextToCheck = caseSensitiveCheckbox.checked ? selectedText : selectedText.toLowerCase();
+
+    if (selectedTextToCheck === queryToCheck) {
+        textarea.value = textarea.value.substring(0, selectionStart) + replacement + textarea.value.substring(selectionEnd);
+        textarea.dispatchEvent(new Event('input')); // Trigger update
+        
+        // Adjust find state to the end of the replaced text
+        findState.lastFoundPos = selectionStart + replacement.length -1;
+    }
+    
+    handleFindNext();
+}
+
+function handleReplaceAll() {
+    const query = findInput.value;
+    if (!query) {
+        findReplaceFeedback.textContent = i18n[uiLang].errorFindText;
+        return;
+    }
+
+    const replacement = replaceInput.value;
+    const flags = caseSensitiveCheckbox.checked ? 'g' : 'gi';
+    const regex = new RegExp(query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), flags);
+    let replacementsCount = 0;
+
+    editorTbody.querySelectorAll('tr[data-index] textarea').forEach(textarea => {
+        const originalValue = textarea.value;
+        if (originalValue.match(regex)) {
+            const newValue = originalValue.replace(regex, replacement);
+            replacementsCount += (originalValue.match(regex) || []).length;
+            textarea.value = newValue;
+            textarea.dispatchEvent(new Event('input')); // Trigger update and resize
+        }
+    });
+
+    findReplaceFeedback.textContent = `Replaced ${replacementsCount} occurrence(s).`;
+    findState = { lastFoundRow: -1, lastFoundPos: -1, currentQuery: '' }; // Reset search
+}
+
+
 // --- EVENT LISTENERS INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     // Populate DOM references
@@ -1029,8 +1430,6 @@ document.addEventListener('DOMContentLoaded', () => {
     translateForm = document.getElementById('translate-form');
     dropzoneElement = document.getElementById("dropzone-upload");
     srtTextInput = document.getElementById('srt_text');
-    apiKeyInput = document.getElementById('api_key');
-    rememberMeCheckbox = document.getElementById('remember_me');
     useProxyCheckbox = document.getElementById('useProxyCheckbox');
     togglePasswordBtn = document.getElementById('togglePasswordBtn');
     langInput = document.getElementById('lang-input');
@@ -1076,18 +1475,46 @@ document.addEventListener('DOMContentLoaded', () => {
     modelSwitchDialog = document.getElementById('model-switch-dialog');
     modalSwitchBtn = document.getElementById('modal-switch-btn');
     modalCancelBtn = document.getElementById('modal-cancel-btn');
+    modalComboSelect = document.getElementById('modal-combo-select');
+    separatorInput = document.getElementById('separator-input');
+    promptTemplateInput = document.getElementById('prompt-template-input');
+    noCensorCheckbox = document.getElementById('no-censor-checkbox');
+    toneInput = document.getElementById('tone-input');
+    apiKeySelect = document.getElementById('api-key-select');
+    newKeyNameInput = document.getElementById('new-key-name');
+    newKeyValueInput = document.getElementById('new-key-value');
+    addKeyBtn = document.getElementById('add-key-btn');
+    deleteKeyBtn = document.getElementById('delete-key-btn');
+    customProxyContainer = document.getElementById('custom-proxy-container');
+    customProxyInput = document.getElementById('custom-proxy-input');
+
+    // Populate new DOM references
+    findReplaceBtn = document.getElementById('find-replace-btn');
+    findReplaceModal = document.getElementById('find-replace-modal');
+    findReplaceDialog = document.getElementById('find-replace-dialog');
+    findReplaceCloseBtn = document.getElementById('find-replace-close-btn');
+    findInput = document.getElementById('find-input');
+    replaceInput = document.getElementById('replace-input');
+    caseSensitiveCheckbox = document.getElementById('case-sensitive-checkbox');
+    findNextBtn = document.getElementById('find-next-btn');
+    replaceBtn = document.getElementById('replace-btn');
+    replaceAllBtn = document.getElementById('replace-all-btn');
+    findReplaceFeedback = document.getElementById('find-replace-feedback');
 
     // Initial Page Setup
+    loadApiKeys();
     updateLanguage(localStorage.getItem('language') === 'fa' ? 'fa' : 'en');
-    loadApiKey();
     goToStep(1);
 
     // Attach Event Listeners
     languageToggle.addEventListener('click', () => updateLanguage(uiLang === 'en' ? 'fa' : 'en'));
     clearMemoryButton.addEventListener('click', clearTranslationMemory);
     togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
-    rememberMeCheckbox.addEventListener('change', saveApiKey);
-    apiKeyInput.addEventListener('input', checkStep1Completion);
+    
+    // API Key Management Listeners
+    addKeyBtn.addEventListener('click', handleAddKey);
+    deleteKeyBtn.addEventListener('click', handleDeleteKey);
+    apiKeySelect.addEventListener('change', handleSelectKey);
     
     nextToStep2Btn.addEventListener('click', () => goToStep(2));
     nextToStep3Btn.addEventListener('click', () => goToStep(3));
@@ -1123,8 +1550,9 @@ document.addEventListener('DOMContentLoaded', () => {
     copyLogBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(logOutput.innerText)
             .then(() => {
-                copyLogBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Copied!';
-                setTimeout(() => { copyLogBtn.innerHTML = '<i class="fas fa-copy mr-1"></i> Copy'; }, 2000);
+                const originalText = i18n[uiLang].logCopy;
+                copyLogBtn.querySelector('span').textContent = i18n[uiLang].logCopied;
+                setTimeout(() => { copyLogBtn.querySelector('span').textContent = originalText; }, 2000);
             });
     });
 
@@ -1133,19 +1561,32 @@ document.addEventListener('DOMContentLoaded', () => {
             manualChunkContainer.style.display = e.target.value === 'manual' ? 'block' : 'none';
         });
     });
-
+    
     modalSwitchBtn.addEventListener('click', () => {
-        if (resolveModalPromise) resolveModalPromise('switch');
+        if (resolveModalPromise) {
+            const selectedValue = modalComboSelect.value;
+            if (selectedValue) {
+                const [newApiKey, newModel] = selectedValue.split('|');
+                resolveModalPromise({ choice: 'switch', newModel, newApiKey });
+            } else {
+                 resolveModalPromise({ choice: 'cancel' });
+            }
+        }
         resolveModalPromise = null;
         hideModal();
     });
+
     modalCancelBtn.addEventListener('click', () => {
-        if (resolveModalPromise) resolveModalPromise('cancel');
+        if (resolveModalPromise) {
+            resolveModalPromise({ choice: 'cancel' });
+        }
         resolveModalPromise = null;
         hideModal();
     });
     modelSwitchModal.addEventListener('click', (e) => {
-        if (e.target === modelSwitchModal) hideModal();
+        if (e.target === modelSwitchModal) {
+             hideModal();
+        }
     });
 
     // Dropzone Configuration
@@ -1181,4 +1622,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Event listeners for features
+    editorTbody.addEventListener('click', (event) => {
+        const retranslateButton = event.target.closest('.retranslate-btn');
+        if (retranslateButton) {
+            handleIndividualRetranslate(retranslateButton);
+        }
+    });
+    
+    findReplaceBtn.addEventListener('click', showFindReplaceModal);
+    findReplaceCloseBtn.addEventListener('click', hideFindReplaceModal);
+    findReplaceModal.addEventListener('click', (e) => {
+        if (e.target === findReplaceModal) hideFindReplaceModal();
+    });
+    findNextBtn.addEventListener('click', handleFindNext);
+    replaceBtn.addEventListener('click', handleReplace);
+    replaceAllBtn.addEventListener('click', handleReplaceAll);
+    findInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleFindNext(); });
+    replaceInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleReplace(); });
+    
+    useProxyCheckbox.addEventListener('change', (e) => {
+        customProxyContainer.style.display = e.target.checked ? 'block' : 'none';
+    });
 });

@@ -362,6 +362,16 @@ function goToStep(stepNumber) {
         }
     });
     window.scrollTo(0, 0);
+
+    // FIX: Run completion check for the newly activated step
+    switch (stepNumber) {
+        case 1:
+            checkStep1Completion();
+            break;
+        case 2:
+            checkStep2Completion();
+            break;
+    }
 }
 
 function checkStep1Completion() {
